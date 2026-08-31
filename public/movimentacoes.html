@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - EstoquePro</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- ========== MENU LATERAL ========== -->
+        <aside class="sidebar">
+            <h2>📦 EstoquePro</h2>
+            <nav>
+                <a href="dashboard.html">📊 Dashboard</a>
+                <a href="produtos.html">📦 Produtos</a>
+                <a href="movimentacoes.html" class="ativo">🔄 Movimentações</a>
+                <a href="relatorios.html">📋 Relatórios</a>
+                <a href="#" id="logout">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <!-- ========== CONTEÚDO ========== -->
+        <main class="content">
+            <!-- CABEÇALHO -->
+            <div class="page-header">
+                <div>
+                    <h1>🔄 Movimentações</h1>
+                    <p>Registre e acompanhe entradas e saídas do estoque em tempo real</p>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnNovaMovimentacao">
+                        ➕ Nova Movimentação
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        🔄 Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESUMO RÁPIDO -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div style="background: #dcfce7; padding: 16px 20px; border-radius: 16px; border-left: 4px solid #16a34a;">
+                    <div style="font-size: 13px; color: #166534; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📥 Entradas (mês)
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #166534;" id="totalEntradas">0</div>
+                </div>
+                <div style="background: #fee2e2; padding: 16px 20px; border-radius: 16px; border-left: 4px solid #dc2626;">
+                    <div style="font-size: 13px; color: #991b1b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📤 Saídas (mês)
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #991b1b;" id="totalSaidas">0</div>
+                </div>
+                <div style="background: #dbeafe; padding: 16px 20px; border-radius: 16px; border-left: 4px solid #2563eb;">
+                    <div style="font-size: 13px; color: #1d4ed8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📊 Total de Movimentações
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #1d4ed8;" id="totalMovimentacoes">0</div>
+                </div>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="toolbar">
+                <input type="text" id="pesquisaMovimentacao" placeholder="🔎 Pesquisar por produto...">
+                
+                <select id="filtroTipo">
+                    <option value="">📋 Todas as movimentações</option>
+                    <option value="ENTRADA">📥 Entradas</option>
+                    <option value="SAIDA">📤 Saídas</option>
+                </select>
+
+                <select id="filtroPeriodo">
+                    <option value="hoje">📅 Hoje</option>
+                    <option value="semana">📅 Última semana</option>
+                    <option value="mes" selected>📅 Último mês</option>
+                    <option value="trimestre">📅 Último trimestre</option>
+                    <option value="ano">📅 Último ano</option>
+                    <option value="todos">📅 Todos</option>
+                </select>
+
+                <button class="btn btn-secondary" id="limparFiltros" style="padding: 12px 20px;">
+                    🧹 Limpar
+                </button>
+            </div>
+
+            <!-- MENSAGENS -->
+            <div id="mensagemMovimentacao" class="mensagem"></div>
+
+            <!-- TABELA -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">ID</th>
+                            <th>Produto</th>
+                            <th style="width: 120px;">Tipo</th>
+                            <th style="width: 100px;">Quantidade</th>
+                            <th>Observação</th>
+                            <th style="width: 130px;">Usuário</th>
+                            <th style="width: 160px;">Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaMovimentacoes">
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding: 60px 0; color: #94a3b8;">
+                                <div style="font-size: 48px; margin-bottom: 12px;">📭</div>
+                                <div style="font-size: 16px; font-weight: 500;">Nenhuma movimentação encontrada</div>
+                                <div style="font-size: 14px; margin-top: 4px;">Clique em "Nova Movimentação" para registrar</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 12px;">
+                <span style="color: #94a3b8; font-size: 14px;" id="infoPaginacao">Mostrando 0 de 0 registros</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary" id="paginaAnterior" style="padding: 8px 16px;">◀ Anterior</button>
+                    <span style="display: flex; align-items: center; padding: 8px 16px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-weight: 600;" id="paginaAtual">1</span>
+                    <button class="btn btn-secondary" id="proximaPagina" style="padding: 8px 16px;">Próxima ▶</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========== MODAL DE MOVIMENTAÇÃO ========== -->
+    <div class="modal" id="modalMovimentacao">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitulo">📝 Nova Movimentação</h2>
+                <button class="btn-fechar" id="fecharModalMovimentacao">×</button>
+            </div>
+
+            <form id="formMovimentacao">
+                <!-- PRODUTO -->
+                <div class="form-group">
+                    <label>📦 Produto *</label>
+                    <select id="produtoId" required>
+                        <option value="">Selecione um produto</option>
+                    </select>
+                </div>
+
+                <!-- ESTOQUE ATUAL -->
+                <div class="estoque-info">
+                    <span>📊 Estoque atual:</span>
+                    <strong id="estoqueAtual">Selecione um produto</strong>
+                </div>
+
+                <!-- TIPO -->
+                <div class="form-group">
+                    <label>🔄 Tipo de Movimentação *</label>
+                    <select id="tipoMovimentacao" required>
+                        <option value="">Selecione</option>
+                        <option value="ENTRADA">📥 Entrada</option>
+                        <option value="SAIDA">📤 Saída</option>
+                    </select>
+                </div>
+
+                <!-- QUANTIDADE -->
+                <div class="form-group">
+                    <label>🔢 Quantidade *</label>
+                    <input type="number" id="quantidadeMovimentacao" min="1" value="1" required>
+                </div>
+
+                <!-- OBSERVAÇÃO -->
+                <div class="form-group">
+                    <label>📝 Observação</label>
+                    <textarea id="observacao" placeholder="Ex: Compra de fornecedor, venda, produto vencido..." rows="4"></textarea>
+                </div>
+
+                <!-- MENSAGEM DO MODAL -->
+                <div id="mensagemModal" class="mensagem"></div>
+
+                <!-- BOTÕES -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelarMovimentacao">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Registrar Movimentação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/movimentacoes.js"></script>
+    <script>
+        // ===== DADOS DE EXEMPLO PARA DEMONSTRAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simula dados se o JS não carregar
+            setTimeout(() => {
+                const tbody = document.getElementById('listaMovimentacoes');
+                if (tbody && tbody.innerHTML.includes('Nenhuma movimentação encontrada')) {
+                    const movimentacoesExemplo = [
+                        { id: 1, produto: 'Teclado Mecânico', tipo: 'ENTRADA', qtd: 15, obs: 'Compra do fornecedor', usuario: 'admin', data: '2026-08-31 14:30' },
+                        { id: 2, produto: 'Mouse Gamer', tipo: 'SAIDA', qtd: 8, obs: 'Venda para cliente', usuario: 'admin', data: '2026-08-31 11:20' },
+                        { id: 3, produto: 'Monitor 24"', tipo: 'ENTRADA', qtd: 5, obs: 'Nova remessa', usuario: 'admin', data: '2026-08-30 16:45' },
+                        { id: 4, produto: 'Cabo HDMI', tipo: 'SAIDA', qtd: 12, obs: 'Venda em lote', usuario: 'admin', data: '2026-08-30 09:10' },
+                    ];
+
+                    tbody.innerHTML = movimentacoesExemplo.map(m => `
+                        <tr>
+                            <td><strong style="color: #2563eb;">#${String(m.id).padStart(4, '0')}</strong></td>
+                            <td><strong>${m.produto}</strong></td>
+                            <td><span class="tipo ${m.tipo.toLowerCase()}">${m.tipo === 'ENTRADA' ? '📥 Entrada' : '📤 Saída'}</span></td>
+                            <td><strong style="color: ${m.tipo === 'ENTRADA' ? '#16a34a' : '#dc2626'};">${m.qtd}</strong></td>
+                            <td style="color: #64748b; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${m.obs || '—'}</td>
+                            <td>👤 ${m.usuario}</td>
+                            <td style="font-size: 13px; color: #94a3b8;">${m.data}</td>
+                        </tr>
+                    `).join('');
+
+                    // Atualiza contadores
+                    document.getElementById('totalEntradas').textContent = '20';
+                    document.getElementById('totalSaidas').textContent = '20';
+                    document.getElementById('totalMovimentacoes').textContent = '40';
+                    document.getElementById('infoPaginacao').textContent = 'Mostrando 4 de 4 registros';
+                }
+            }, 300);
+        });
+
+        // ===== FILTROS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const limparBtn = document.getElementById('limparFiltros');
+            if (limparBtn) {
+                limparBtn.addEventListener('click', function() {
+                    document.getElementById('pesquisaMovimentacao').value = '';
+                    document.getElementById('filtroTipo').value = '';
+                    document.getElementById('filtroPeriodo').value = 'mes';
+                    // Dispara evento de pesquisa (se existir no JS)
+                    const event = new Event('input');
+                    document.getElementById('pesquisaMovimentacao').dispatchEvent(event);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

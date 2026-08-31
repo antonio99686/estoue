@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EstoquePro - Login</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body class="login-body">
+    <!-- ========== FUNDO COM DECORAÇÃO ========== -->
+    <div class="login-background">
+      <div class="login-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+    </div>
+
+    <!-- ========== CONTAINER PRINCIPAL ========== -->
+    <div class="login-container">
+      <div class="login-card">
+        <!-- LOGO -->
+        <div class="login-logo">
+          <div class="logo-icon">📦</div>
+          <h1>Estoque<span>Pro</span></h1>
+        </div>
+
+        <p class="login-subtitle">Sistema de Controle de Estoque</p>
+
+        <!-- FORMULÁRIO -->
+        <form id="loginForm">
+          <div class="input-group">
+            <label for="email">📧 E-mail</label>
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="seu@email.com" 
+              required 
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="senha">🔒 Senha</label>
+            <div class="password-wrapper">
+              <input 
+                type="password" 
+                id="senha" 
+                placeholder="Digite sua senha" 
+                required 
+                autocomplete="current-password"
+              />
+              <button type="button" class="toggle-password" id="toggleSenha" aria-label="Mostrar senha">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="lembrar" />
+              <span class="checkmark"></span>
+              Lembrar-me
+            </label>
+            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+          </div>
+
+          <button type="submit" class="btn-login">
+            <span>Entrar</span>
+            <span class="btn-icon">→</span>
+          </button>
+        </form>
+
+        <!-- MENSAGEM DE RETORNO -->
+        <div id="mensagem" class="login-mensagem"></div>
+
+        <!-- RODAPÉ -->
+        <div class="login-footer">
+          <p>Não tem uma conta? <a href="#">Criar conta</a></p>
+          <p class="version">v2.0.0</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/login.js"></script>
+    <script>
+      // ===== TOGGLE SENHA =====
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggleSenha');
+        const senhaInput = document.getElementById('senha');
+
+        if (toggleBtn && senhaInput) {
+          toggleBtn.addEventListener('click', function() {
+            const type = senhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            senhaInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+          });
+        }
+      });
+
+      // ===== VALIDAÇÃO DE E-MAIL EM TEMPO REAL =====
+      document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+          emailInput.addEventListener('input', function() {
+            const valor = this.value;
+            const mensagem = document.getElementById('mensagem');
+            if (valor && !valor.includes('@')) {
+              mensagem.textContent = '⚠️ Digite um e-mail válido';
+              mensagem.className = 'login-mensagem erro';
+            } else {
+              mensagem.textContent = '';
+              mensagem.className = 'login-mensagem';
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

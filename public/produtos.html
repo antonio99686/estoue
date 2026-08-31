@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - EstoquePro</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- ========== MENU LATERAL ========== -->
+        <aside class="sidebar">
+            <h2>📦 EstoquePro</h2>
+            <nav>
+                <a href="dashboard.html">📊 Dashboard</a>
+                <a href="produtos.html" class="ativo">📦 Produtos</a>
+                <a href="movimentacoes.html">🔄 Movimentações</a>
+                <a href="relatorios.html">📋 Relatórios</a>
+                <a href="#" id="logout">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <!-- ========== CONTEÚDO ========== -->
+        <main class="content">
+            <!-- CABEÇALHO -->
+            <div class="page-header">
+                <div>
+                    <h1>📦 Produtos</h1>
+                    <p>Gerencie todos os produtos do seu estoque de forma eficiente</p>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnNovoProduto">
+                        ➕ Novo Produto
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        🔄 Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESUMO RÁPIDO -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📦 Total de Produtos
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #0f172a;" id="totalProdutos">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #16a34a;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        ✅ Em Estoque
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #16a34a;" id="produtosEstoque">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        ⚠️ Estoque Baixo
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #d97706;" id="produtosBaixo">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #dc2626;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        🚫 Esgotados
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #dc2626;" id="produtosZerados">0</div>
+                </div>
+            </div>
+
+            <!-- PESQUISA E FILTROS -->
+            <div class="toolbar">
+                <input type="text" id="pesquisa" placeholder="🔎 Pesquisar por nome, código ou categoria...">
+                
+                <select id="filtroEstoque">
+                    <option value="">📋 Todos os produtos</option>
+                    <option value="normal">✅ Estoque normal</option>
+                    <option value="baixo">⚠️ Estoque baixo</option>
+                    <option value="zerado">🚫 Estoque zerado</option>
+                </select>
+
+                <select id="filtroCategoria">
+                    <option value="">📂 Todas as categorias</option>
+                </select>
+
+                <button class="btn btn-secondary" id="limparFiltros" style="padding: 12px 20px;">
+                    🧹 Limpar
+                </button>
+            </div>
+
+            <!-- MENSAGEM -->
+            <div id="mensagem" class="mensagem"></div>
+
+            <!-- TABELA -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">ID</th>
+                            <th>Produto</th>
+                            <th style="width: 120px;">Código</th>
+                            <th style="width: 130px;">Categoria</th>
+                            <th style="width: 110px;">Compra</th>
+                            <th style="width: 110px;">Venda</th>
+                            <th style="width: 90px;">Estoque</th>
+                            <th style="width: 110px;">Status</th>
+                            <th style="width: 130px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaProdutos">
+                        <tr>
+                            <td colspan="9" style="text-align:center; padding: 60px 0; color: #94a3b8;">
+                                <div style="font-size: 48px; margin-bottom: 12px;">📦</div>
+                                <div style="font-size: 16px; font-weight: 500;">Nenhum produto cadastrado</div>
+                                <div style="font-size: 14px; margin-top: 4px;">Clique em "Novo Produto" para começar</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 12px;">
+                <span style="color: #94a3b8; font-size: 14px;" id="infoPaginacao">Mostrando 0 de 0 registros</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary" id="paginaAnterior" style="padding: 8px 16px;">◀ Anterior</button>
+                    <span style="display: flex; align-items: center; padding: 8px 16px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-weight: 600;" id="paginaAtual">1</span>
+                    <button class="btn btn-secondary" id="proximaPagina" style="padding: 8px 16px;">Próxima ▶</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========== MODAL ========== -->
+    <div class="modal" id="modalProduto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModal">📝 Novo Produto</h2>
+                <button class="btn-fechar" id="fecharModal">×</button>
+            </div>
+
+            <form id="formProduto">
+                <input type="hidden" id="produtoId">
+
+                <div class="form-grid">
+                    <!-- NOME -->
+                    <div class="form-group">
+                        <label>📦 Nome do Produto *</label>
+                        <input type="text" id="nome" placeholder="Ex: Mouse Gamer" required>
+                    </div>
+
+                    <!-- CÓDIGO -->
+                    <div class="form-group">
+                        <label>🔢 Código</label>
+                        <input type="text" id="codigo" placeholder="Ex: 789123456">
+                    </div>
+
+                    <!-- CATEGORIA -->
+                    <div class="form-group">
+                        <label>📂 Categoria</label>
+                        <select id="categoria">
+                            <option value="">Sem categoria</option>
+                            <option value="Eletrônicos">Eletrônicos</option>
+                            <option value="Informática">Informática</option>
+                            <option value="Periféricos">Periféricos</option>
+                            <option value="Áudio">Áudio</option>
+                            <option value="Vídeo">Vídeo</option>
+                            <option value="Acessórios">Acessórios</option>
+                            <option value="Redes">Redes</option>
+                            <option value="Impressão">Impressão</option>
+                            <option value="Armazenamento">Armazenamento</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <!-- QUANTIDADE -->
+                    <div class="form-group">
+                        <label>🔢 Quantidade em Estoque</label>
+                        <input type="number" id="quantidade" min="0" value="0">
+                    </div>
+
+                    <!-- ESTOQUE MÍNIMO -->
+                    <div class="form-group">
+                        <label>⚠️ Estoque Mínimo</label>
+                        <input type="number" id="estoqueMinimo" min="0" value="5">
+                        <small style="color: #94a3b8; font-size: 12px;">Produto será alertado ao atingir este valor</small>
+                    </div>
+
+                    <!-- PREÇO COMPRA -->
+                    <div class="form-group">
+                        <label>💰 Preço de Compra</label>
+                        <input type="number" id="precoCompra" min="0" step="0.01" value="0" placeholder="0,00">
+                    </div>
+
+                    <!-- PREÇO VENDA -->
+                    <div class="form-group">
+                        <label>💲 Preço de Venda</label>
+                        <input type="number" id="precoVenda" min="0" step="0.01" value="0" placeholder="0,00">
+                    </div>
+
+                    <!-- LUCRO ESTIMADO (só visualização) -->
+                    <div class="form-group" style="background: #f8fafc; border-radius: 12px; padding: 12px 14px; justify-content: center;">
+                        <label style="font-weight: 400; color: #64748b; font-size: 13px;">📈 Lucro Estimado</label>
+                        <div style="font-size: 20px; font-weight: 700; color: #16a34a;" id="lucroEstimado">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- BOTÕES -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelarModal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">💾 Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/produtos.js"></script>
+    <script>
+        // ===== CÁLCULO DE LUCRO EM TEMPO REAL =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const precoCompra = document.getElementById('precoCompra');
+            const precoVenda = document.getElementById('precoVenda');
+            const lucroDisplay = document.getElementById('lucroEstimado');
+
+            function calcularLucro() {
+                const compra = parseFloat(precoCompra.value) || 0;
+                const venda = parseFloat(precoVenda.value) || 0;
+                const lucro = venda - compra;
+                const cor = lucro >= 0 ? '#16a34a' : '#dc2626';
+                lucroDisplay.style.color = cor;
+                lucroDisplay.textContent = `R$ ${lucro.toFixed(2)}`;
+            }
+
+            if (precoCompra && precoVenda) {
+                precoCompra.addEventListener('input', calcularLucro);
+                precoVenda.addEventListener('input', calcularLucro);
+            }
+        });
+
+        // ===== DADOS DE EXEMPLO PARA DEMONSTRAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const tbody = document.getElementById('listaProdutos');
+                if (tbody && tbody.innerHTML.includes('Nenhum produto cadastrado')) {
+                    const produtosExemplo = [
+                        { id: 1, nome: 'Teclado Mecânico RGB', codigo: '789123456', categoria: 'Periféricos', compra: 89.90, venda: 149.90, qtd: 15, min: 5 },
+                        { id: 2, nome: 'Mouse Gamer', codigo: '789123457', categoria: 'Periféricos', compra: 45.00, venda: 79.90, qtd: 8, min: 5 },
+                        { id: 3, nome: 'Monitor 24" IPS', codigo: '789123458', categoria: 'Vídeo', compra: 450.00, venda: 699.00, qtd: 3, min: 5 },
+                        { id: 4, nome: 'Cabo HDMI 2m', codigo: '789123459', categoria: 'Acessórios', compra: 12.00, venda: 25.00, qtd: 0, min: 10 },
+                        { id: 5, nome: 'Webcam HD 1080p', codigo: '789123460', categoria: 'Vídeo', compra: 85.00, venda: 149.00, qtd: 2, min: 5 },
+                    ];
+
+                    tbody.innerHTML = produtosExemplo.map(p => {
+                        const status = p.qtd === 0 ? 'zerado' : p.qtd < p.min ? 'baixo' : 'normal';
+                        const statusText = p.qtd === 0 ? '🚫 Esgotado' : p.qtd < p.min ? '⚠️ Baixo' : '✅ Normal';
+                        const statusColor = p.qtd === 0 ? '#dc2626' : p.qtd < p.min ? '#d97706' : '#16a34a';
+
+                        return `
+                            <tr>
+                                <td><strong style="color: #2563eb;">#${String(p.id).padStart(4, '0')}</strong></td>
+                                <td><strong>${p.nome}</strong></td>
+                                <td style="color: #64748b; font-size: 13px;">${p.codigo || '—'}</td>
+                                <td><span style="background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-size: 13px;">${p.categoria}</span></td>
+                                <td style="color: #64748b;">R$ ${p.compra.toFixed(2)}</td>
+                                <td style="font-weight: 600; color: #0f172a;">R$ ${p.venda.toFixed(2)}</td>
+                                <td><strong style="color: ${p.qtd === 0 ? '#dc2626' : '#0f172a'};">${p.qtd}</strong></td>
+                                <td><span class="status ${status}" style="background: ${p.qtd === 0 ? '#fee2e2' : p.qtd < p.min ? '#fef3c7' : '#dcfce7'}; color: ${statusColor};">${statusText}</span></td>
+                                <td>
+                                    <div class="acoes">
+                                        <button class="btn-editar" onclick="alert('Editar produto #${String(p.id).padStart(4, '0')}')">✏️</button>
+                                        <button class="btn-excluir" onclick="if(confirm('Deseja realmente excluir ${p.nome}?')) alert('Produto #${String(p.id).padStart(4, '0')} excluído')">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    // Atualiza contadores
+                    document.getElementById('totalProdutos').textContent = '156';
+                    document.getElementById('produtosEstoque').textContent = '148';
+                    document.getElementById('produtosBaixo').textContent = '5';
+                    document.getElementById('produtosZerados').textContent = '3';
+                    document.getElementById('infoPaginacao').textContent = 'Mostrando 5 de 156 registros';
+                }
+            }, 300);
+        });
+
+        // ===== FILTROS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const limparBtn = document.getElementById('limparFiltros');
+            if (limparBtn) {
+                limparBtn.addEventListener('click', function() {
+                    document.getElementById('pesquisa').value = '';
+                    document.getElementById('filtroEstoque').value = '';
+                    document.getElementById('filtroCategoria').value = '';
+                    // Dispara evento de pesquisa (se existir no JS)
+                    const event = new Event('input');
+                    document.getElementById('pesquisa').dispatchEvent(event);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

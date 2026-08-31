@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - EstoquePro</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- ========== MENU LATERAL ========== -->
+        <aside class="sidebar">
+            <h2>📦 EstoquePro</h2>
+            <nav>
+                <a href="dashboard.html">📊 Dashboard</a>
+                <a href="produtos.html">📦 Produtos</a>
+                <a href="movimentacoes.html">🔄 Movimentações</a>
+                <a href="relatorios.html" class="ativo">📋 Relatórios</a>
+                <a href="#" id="logout">🚪 Sair</a>
+            </nav>
+        </aside>
+
+        <!-- ========== CONTEÚDO ========== -->
+        <main class="content">
+            <!-- CABEÇALHO -->
+            <div class="page-header">
+                <div>
+                    <h1>📋 Relatórios</h1>
+                    <p>Análise completa do seu estoque com dados detalhados e filtros</p>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="imprimirRelatorio()">
+                        🖨️ Imprimir
+                    </button>
+                    <button class="btn btn-success" onclick="exportarExcel()">
+                        📊 Exportar Excel
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        🔄 Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== CARDS DE RESUMO ===== -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div style="background: #ffffff; padding: 18px 22px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📦 Total de Produtos
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #0f172a;" id="totalProdutos">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 18px 22px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #8b5cf6;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        📊 Unidades em Estoque
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #0f172a;" id="totalUnidades">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 18px 22px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        ⚠️ Estoque Baixo
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #d97706;" id="estoqueBaixo">0</div>
+                </div>
+                <div style="background: #ffffff; padding: 18px 22px; border-radius: 16px; border: 1px solid #e2e8f0; border-left: 4px solid #16a34a;">
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">
+                        💰 Valor em Estoque
+                    </div>
+                    <div style="font-size: 28px; font-weight: 700; color: #16a34a;" id="valorEstoque">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- ===== FILTROS ===== -->
+            <div class="relatorios-filtros">
+                <div>
+                    <label>📅 Data Inicial</label>
+                    <input type="date" id="dataInicio">
+                </div>
+                <div>
+                    <label>📅 Data Final</label>
+                    <input type="date" id="dataFim">
+                </div>
+                <div>
+                    <label>📂 Categoria</label>
+                    <select id="filtroCategoria">
+                        <option value="">Todas as categorias</option>
+                        <option value="Eletrônicos">Eletrônicos</option>
+                        <option value="Informática">Informática</option>
+                        <option value="Periféricos">Periféricos</option>
+                        <option value="Áudio">Áudio</option>
+                        <option value="Vídeo">Vídeo</option>
+                        <option value="Acessórios">Acessórios</option>
+                        <option value="Redes">Redes</option>
+                        <option value="Impressão">Impressão</option>
+                        <option value="Armazenamento">Armazenamento</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: flex-end; flex: 0 0 auto;">
+                    <button class="btn btn-primary" id="btnFiltrar">🔎 Filtrar</button>
+                    <button class="btn btn-secondary" id="btnLimpar">🧹 Limpar</button>
+                </div>
+            </div>
+
+            <!-- ===== RESUMO ENTRADA/SAÍDA ===== -->
+            <div class="relatorio-resumo">
+                <div class="resumo-entrada">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>📥 Entradas</span>
+                        <span style="font-size: 14px; font-weight: 400; opacity: 0.8;">Último período</span>
+                    </div>
+                    <strong id="totalEntradas">0</strong>
+                    <small>Total de itens recebidos</small>
+                </div>
+                <div class="resumo-saida">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>📤 Saídas</span>
+                        <span style="font-size: 14px; font-weight: 400; opacity: 0.8;">Último período</span>
+                    </div>
+                    <strong id="totalSaidas">0</strong>
+                    <small>Total de itens retirados</small>
+                </div>
+            </div>
+
+            <!-- ===== ALERTAS ===== -->
+            <div class="relatorio-grid">
+                <!-- ESTOQUE BAIXO -->
+                <div class="relatorio-box">
+                    <h2>⚠️ Produtos com Estoque Baixo</h2>
+                    <div id="listaEstoqueBaixo">
+                        <p style="color: #94a3b8; text-align: center; padding: 20px 0;">Carregando...</p>
+                    </div>
+                </div>
+
+                <!-- ESTOQUE ZERADO -->
+                <div class="relatorio-box">
+                    <h2>🚫 Produtos Zerados</h2>
+                    <div id="listaEstoqueZerado">
+                        <p style="color: #94a3b8; text-align: center; padding: 20px 0;">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== HISTÓRICO ===== -->
+            <div class="relatorio-box historico-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <h2 style="margin-bottom: 0;">🔄 Histórico de Movimentações</h2>
+                    <span style="color: #94a3b8; font-size: 14px;" id="totalHistorico">0 registros</span>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th style="width: 120px;">Tipo</th>
+                                <th style="width: 100px;">Quantidade</th>
+                                <th style="width: 130px;">Usuário</th>
+                                <th style="width: 160px;">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaRelatorioMovimentacoes">
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding: 40px 0; color: #94a3b8;">
+                                    <div style="font-size: 36px; margin-bottom: 8px;">📭</div>
+                                    <div style="font-size: 15px;">Nenhuma movimentação encontrada</div>
+                                    <div style="font-size: 13px; margin-top: 4px;">Ajuste os filtros para visualizar dados</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== RODAPÉ ===== -->
+            <div style="margin-top: 24px; padding: 16px 0; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <span style="color: #94a3b8; font-size: 14px;">
+                    📊 Relatório gerado em: <span id="dataGeracao">--/--/---- --:--</span>
+                </span>
+                <span style="color: #94a3b8; font-size: 14px;">
+                    🟢 Sistema operacional
+                </span>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/relatorios.js"></script>
+    <script>
+        // ===== DATA DE GERAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const agora = new Date();
+            const data = agora.toLocaleDateString('pt-BR');
+            const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('dataGeracao').textContent = `${data} ${hora}`;
+        });
+
+        // ===== FUNÇÃO PARA EXPORTAR EXCEL =====
+        function exportarExcel() {
+            alert('📊 Exportando para Excel...\nFunção em desenvolvimento.');
+        }
+
+        // ===== FUNÇÃO PARA IMPRIMIR =====
+        function imprimirRelatorio() {
+            window.print();
+        }
+
+        // ===== DADOS DE EXEMPLO PARA DEMONSTRAÇÃO =====
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                // Verifica se os dados já foram carregados
+                const tbody = document.getElementById('listaRelatorioMovimentacoes');
+                if (tbody && tbody.innerHTML.includes('Nenhuma movimentação encontrada')) {
+                    // Atualiza cards
+                    document.getElementById('totalProdutos').textContent = '156';
+                    document.getElementById('totalUnidades').textContent = '1.247';
+                    document.getElementById('estoqueBaixo').textContent = '8';
+                    document.getElementById('valorEstoque').textContent = 'R$ 42.580,00';
+
+                    // Entradas e Saídas
+                    document.getElementById('totalEntradas').textContent = '342';
+                    document.getElementById('totalSaidas').textContent = '189';
+
+                    // Estoque Baixo
+                    const baixoContainer = document.getElementById('listaEstoqueBaixo');
+                    const produtosBaixo = [
+                        { nome: 'Fone de Ouvido', qtd: 3, min: 5 },
+                        { nome: 'Hub USB-C', qtd: 2, min: 5 },
+                        { nome: 'Teclado Sem Fio', qtd: 4, min: 5 },
+                        { nome: 'Mousepad Gamer', qtd: 3, min: 10 },
+                    ];
+                    baixoContainer.innerHTML = produtosBaixo.map(p => `
+                        <div class="produto-alerta baixo">
+                            <span class="nome">${p.nome}</span>
+                            <span class="qtd">${p.qtd} / ${p.min} unidade${p.qtd !== 1 ? 's' : ''}</span>
+                        </div>
+                    `).join('');
+
+                    // Estoque Zerado
+                    const zeradoContainer = document.getElementById('listaEstoqueZerado');
+                    const produtosZerados = [
+                        { nome: 'Cabo HDMI 2m' },
+                        { nome: 'Webcam HD 1080p' },
+                        { nome: 'Adaptador USB-C' },
+                    ];
+                    zeradoContainer.innerHTML = produtosZerados.map(p => `
+                        <div class="produto-alerta zerado">
+                            <span class="nome">${p.nome}</span>
+                            <span class="qtd">0 unidades</span>
+                        </div>
+                    `).join('');
+
+                    // Histórico
+                    const historico = [
+                        { produto: 'Teclado Mecânico RGB', tipo: 'ENTRADA', qtd: 15, usuario: 'admin', data: '2026-08-31 14:30' },
+                        { produto: 'Mouse Gamer', tipo: 'SAIDA', qtd: 8, usuario: 'admin', data: '2026-08-31 11:20' },
+                        { produto: 'Monitor 24" IPS', tipo: 'ENTRADA', qtd: 5, usuario: 'admin', data: '2026-08-30 16:45' },
+                        { produto: 'Cabo HDMI 2m', tipo: 'SAIDA', qtd: 12, usuario: 'admin', data: '2026-08-30 09:10' },
+                        { produto: 'Webcam HD 1080p', tipo: 'ENTRADA', qtd: 10, usuario: 'admin', data: '2026-08-29 13:20' },
+                        { produto: 'Hub USB-C', tipo: 'SAIDA', qtd: 3, usuario: 'admin', data: '2026-08-29 10:45' },
+                    ];
+
+                    document.getElementById('totalHistorico').textContent = `${historico.length} registros`;
+
+                    tbody.innerHTML = historico.map(m => `
+                        <tr>
+                            <td><strong style="font-size: 14px;">${m.produto}</strong></td>
+                            <td><span class="tipo ${m.tipo.toLowerCase()}">${m.tipo === 'ENTRADA' ? '📥 Entrada' : '📤 Saída'}</span></td>
+                            <td><strong style="color: ${m.tipo === 'ENTRADA' ? '#16a34a' : '#dc2626'}; font-size: 15px;">${m.qtd}</strong></td>
+                            <td style="color: #64748b;">👤 ${m.usuario}</td>
+                            <td style="color: #94a3b8; font-size: 13px;">${m.data}</td>
+                        </tr>
+                    `).join('');
+                }
+            }, 300);
+        });
+
+        // ===== FILTROS =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const limparBtn = document.getElementById('btnLimpar');
+            if (limparBtn) {
+                limparBtn.addEventListener('click', function() {
+                    document.getElementById('dataInicio').value = '';
+                    document.getElementById('dataFim').value = '';
+                    document.getElementById('filtroCategoria').value = '';
+                    alert('🧹 Filtros limpos!');
+                });
+            }
+
+            const filtrarBtn = document.getElementById('btnFiltrar');
+            if (filtrarBtn) {
+                filtrarBtn.addEventListener('click', function() {
+                    const inicio = document.getElementById('dataInicio').value;
+                    const fim = document.getElementById('dataFim').value;
+                    const categoria = document.getElementById('filtroCategoria').value;
+                    let msg = '🔎 Filtrando relatório...';
+                    if (inicio) msg += `\nData Inicial: ${inicio}`;
+                    if (fim) msg += `\nData Final: ${fim}`;
+                    if (categoria) msg += `\nCategoria: ${categoria}`;
+                    alert(msg);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

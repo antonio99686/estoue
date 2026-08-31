@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EstoquePro - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="sidebar">
+        <h2>📦 EstoquePro</h2>
+        <nav>
+          <a href="dashboard.html" class="ativo"> 📊 Dashboard </a>
+          <a href="produtos.html"> 📦 Produtos </a>
+          <a href="movimentacoes.html"> 🔄 Movimentações </a>
+          <a href="relatorios.html"> 📋 Relatórios </a>
+          <a href="#" id="logout"> 🚪 Sair </a>
+        </nav>
+      </aside>
+
+      <!-- ========== CONTEÚDO ========== -->
+      <main class="content">
+        <!-- CABEÇALHO -->
+        <div class="page-header">
+          <div>
+            <h1>📊 Dashboard</h1>
+            <p>Visão geral do seu estoque em tempo real</p>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-secondary" onclick="window.location.reload()">
+              🔄 Atualizar
+            </button>
+            <button class="btn btn-primary" onclick="gerarRelatorio()">
+              📋 Gerar Relatório
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== CARDS PRINCIPAIS ===== -->
+        <div class="cards">
+          <div class="card">
+            <h3>📦 Total de Produtos</h3>
+            <span id="totalProdutos">0</span>
+            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+              Cadastrados no sistema
+            </small>
+          </div>
+
+          <div class="card">
+            <h3>📊 Unidades em Estoque</h3>
+            <span id="totalEstoque">0</span>
+            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+              Total de itens disponíveis
+            </small>
+          </div>
+
+          <div class="card" style="border-color: #fef3c7;">
+            <h3>⚠️ Estoque Baixo</h3>
+            <span id="estoqueBaixo" style="color: #d97706;">0</span>
+            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+              Produtos com quantidade crítica
+            </small>
+          </div>
+
+          <div class="card" style="border-color: #fee2e2;">
+            <h3>🚫 Sem Estoque</h3>
+            <span id="estoqueZerado" style="color: #dc2626;">0</span>
+            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+              Produtos esgotados
+            </small>
+          </div>
+        </div>
+
+        <!-- ===== INFORMAÇÕES ADICIONAIS ===== -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 30px;">
+          
+          <!-- ÚLTIMAS MOVIMENTAÇÕES -->
+          <div class="relatorio-box">
+            <h2>🔄 Últimas Movimentações</h2>
+            <div id="ultimasMovimentacoes" style="margin-top: 16px;">
+              <p style="color: #94a3b8; text-align: center; padding: 30px 0;">
+                Nenhuma movimentação registrada
+              </p>
+            </div>
+            <div style="margin-top: 16px; text-align: right;">
+              <a href="movimentacoes.html" style="color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px;">
+                Ver todas →
+              </a>
+            </div>
+          </div>
+
+          <!-- PRODUTOS COM ESTOQUE BAIXO -->
+          <div class="relatorio-box" style="border-color: #fef3c7;">
+            <h2>⚠️ Alertas de Estoque</h2>
+            <div id="alertasEstoque" style="margin-top: 16px;">
+              <p style="color: #94a3b8; text-align: center; padding: 30px 0;">
+                Nenhum produto com estoque baixo
+              </p>
+            </div>
+            <div style="margin-top: 16px; text-align: right;">
+              <a href="produtos.html" style="color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px;">
+                Gerenciar produtos →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== RESUMO RÁPIDO ===== -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; padding: 20px; background: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0;">
+          <div style="text-align: center; padding: 12px;">
+            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Entradas (mês)</div>
+            <div style="font-size: 24px; font-weight: 700; color: #16a34a;" id="entradasMes">0</div>
+          </div>
+          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
+            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Saídas (mês)</div>
+            <div style="font-size: 24px; font-weight: 700; color: #dc2626;" id="saidasMes">0</div>
+          </div>
+          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
+            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Saldo Total</div>
+            <div style="font-size: 24px; font-weight: 700; color: #0f172a;" id="saldoTotal">R$ 0,00</div>
+          </div>
+          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
+            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Categorias</div>
+            <div style="font-size: 24px; font-weight: 700; color: #3b82f6;" id="totalCategorias">0</div>
+          </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <div style="margin-top: 40px; padding: 16px 0; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <span style="color: #94a3b8; font-size: 14px;">
+            📅 Última atualização: <span id="ultimaAtualizacao">--/--/---- --:--</span>
+          </span>
+          <span style="color: #94a3b8; font-size: 14px;">
+            🟢 Sistema operacional
+          </span>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script>
+      // Atualiza a data/hora
+      function atualizarDataHora() {
+        const agora = new Date();
+        const data = agora.toLocaleDateString('pt-BR');
+        const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('ultimaAtualizacao').textContent = `${data} ${hora}`;
+      }
+      atualizarDataHora();
+      setInterval(atualizarDataHora, 60000);
+
+      // Função para gerar relatório (exemplo)
+      function gerarRelatorio() {
+        alert('📋 Gerando relatório...\nFunção em desenvolvimento.');
+      }
+
+      // Simulação de dados (para teste - remova quando integrar com o backend)
+      document.addEventListener('DOMContentLoaded', function() {
+        // Se os dados não foram carregados pelo dashboard.js, simula alguns valores
+        setTimeout(() => {
+          const totalProdutos = document.getElementById('totalProdutos');
+          if (totalProdutos.textContent === '0') {
+            // Dados de exemplo
+            document.getElementById('totalProdutos').textContent = '156';
+            document.getElementById('totalEstoque').textContent = '1.247';
+            document.getElementById('estoqueBaixo').textContent = '8';
+            document.getElementById('estoqueZerado').textContent = '3';
+            document.getElementById('entradasMes').textContent = '342';
+            document.getElementById('saidasMes').textContent = '189';
+            document.getElementById('saldoTotal').textContent = 'R$ 42.580,00';
+            document.getElementById('totalCategorias').textContent = '12';
+
+            // Movimentações recentes (exemplo)
+            const movimentacoes = [
+              { produto: 'Teclado Mecânico', tipo: 'entrada', qtd: 15, data: 'Hoje, 14:30' },
+              { produto: 'Mouse Gamer', tipo: 'saida', qtd: 8, data: 'Hoje, 11:20' },
+              { produto: 'Monitor 24"', tipo: 'entrada', qtd: 5, data: 'Ontem, 16:45' },
+              { produto: 'Cabo HDMI', tipo: 'saida', qtd: 12, data: 'Ontem, 09:10' },
+            ];
+
+            const container = document.getElementById('ultimasMovimentacoes');
+            container.innerHTML = movimentacoes.map(m => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                <div>
+                  <strong style="font-size: 15px;">${m.produto}</strong>
+                  <span class="tipo ${m.tipo}">${m.tipo === 'entrada' ? '⬆ Entrada' : '⬇ Saída'}</span>
+                  <span style="color: #94a3b8; font-size: 13px; margin-left: 8px;">${m.qtd} unidades</span>
+                </div>
+                <span style="color: #94a3b8; font-size: 13px;">${m.data}</span>
+              </div>
+            `).join('');
+
+            // Alertas de estoque (exemplo)
+            const alertas = [
+              { nome: 'Fone de Ouvido', qtd: 3, status: 'baixo' },
+              { nome: 'Webcam HD', qtd: 0, status: 'zerado' },
+              { nome: 'Hub USB-C', qtd: 2, status: 'baixo' },
+            ];
+
+            const alertasContainer = document.getElementById('alertasEstoque');
+            alertasContainer.innerHTML = alertas.map(a => `
+              <div class="produto-alerta ${a.status}">
+                <span class="nome">${a.nome}</span>
+                <span class="qtd">${a.qtd} unidade${a.qtd !== 1 ? 's' : ''}</span>
+              </div>
+            `).join('');
+          }
+        }, 300);
+      });
+    </script>
+  </body>
+</html>
