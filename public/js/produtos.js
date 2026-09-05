@@ -1,107 +1,68 @@
 const token = localStorage.getItem("token");
 
 if (!token) {
-    window.location.href = "index.html";
+  window.location.href = "index.html";
 }
 
 const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
 };
 
 let produtos = [];
 let categorias = [];
 
-const listaProdutos =
-    document.getElementById("listaProdutos");
+const listaProdutos = document.getElementById("listaProdutos");
 
-const modal =
-    document.getElementById("modalProduto");
+const modal = document.getElementById("modalProduto");
 
-const form =
-    document.getElementById("formProduto");
+const form = document.getElementById("formProduto");
 
-const mensagem =
-    document.getElementById("mensagem");
-
+const mensagem = document.getElementById("mensagem");
 
 function mostrarMensagem(texto, tipo = "sucesso") {
+  mensagem.textContent = texto;
 
-    mensagem.textContent = texto;
+  mensagem.className = `mensagem ${tipo}`;
 
-    mensagem.className =
-        `mensagem ${tipo}`;
+  setTimeout(() => {
+    mensagem.textContent = "";
 
-    setTimeout(() => {
-
-        mensagem.textContent = "";
-
-        mensagem.className =
-            "mensagem";
-
-    }, 3000);
-
+    mensagem.className = "mensagem";
+  }, 3000);
 }
 
-
 async function carregarCategorias() {
+  try {
+    const resposta = await fetch("/api/categorias", {
+      headers,
+    });
 
-    try {
+    categorias = await resposta.json();
 
-        const resposta =
-            await fetch(
-                "/api/categorias",
-                {
-                    headers
-                }
-            );
+    const select = document.getElementById("categoria");
 
-        categorias =
-            await resposta.json();
-
-
-        const select =
-            document.getElementById("categoria");
-
-
-        select.innerHTML =
-            `<option value="">
+    select.innerHTML = `<option value="">
                 Sem categoria
             </option>`;
 
-
-        categorias.forEach(
-            categoria => {
-
-                select.innerHTML += `
+    categorias.forEach((categoria) => {
+      select.innerHTML += `
                     <option
                         value="${categoria.id}"
                     >
                         ${categoria.nome}
                     </option>
                 `;
-
-            }
-        );
-
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao carregar categorias:",
-            erro
-        );
-
-    }
-
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar categorias:", erro);
+  }
 }
 
-
 async function carregarProdutos() {
-
-    try {
-
-        listaProdutos.innerHTML = `
+  try {
+    listaProdutos.innerHTML = `
             <tr>
                 <td colspan="9">
                     Carregando produtos...
@@ -109,145 +70,91 @@ async function carregarProdutos() {
             </tr>
         `;
 
+    const resposta = await fetch("/api/produtos", {
+      headers,
+    });
 
-        const resposta =
-            await fetch(
-                "/api/produtos",
-                {
-                    headers
-                }
-            );
+    if (!resposta.ok) {
+      throw new Error("Erro ao carregar produtos");
+    }
 
+    produtos = await resposta.json();
 
-        if (!resposta.ok) {
+    renderizarProdutos();
+  } catch (erro) {
+    console.error(erro);
 
-            throw new Error(
-                "Erro ao carregar produtos"
-            );
-
-        }
-
-
-        produtos =
-            await resposta.json();
-
-
-        renderizarProdutos();
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-
-        listaProdutos.innerHTML = `
+    listaProdutos.innerHTML = `
             <tr>
                 <td colspan="9">
                     Erro ao carregar produtos.
                 </td>
             </tr>
         `;
+  }
+}
+function atualizarResumo() {
+  const total = produtos.length;
 
-    }
+  const estoque = produtos.filter((produto) => {
+    return Number(produto.quantidade) > 0;
+  }).length;
 
+  const baixo = produtos.filter((produto) => {
+    const quantidade = Number(produto.quantidade);
+    const minimo = Number(produto.estoque_minimo);
+
+    return quantidade > 0 && quantidade <= minimo;
+  }).length;
+
+  const zerados = produtos.filter((produto) => {
+    return Number(produto.quantidade) === 0;
+  }).length;
+
+  document.getElementById("totalProdutos").textContent = total;
+  document.getElementById("produtosEstoque").textContent = estoque;
+  document.getElementById("produtosBaixo").textContent = baixo;
+  document.getElementById("produtosZerados").textContent = zerados;
 }
 
 
 function renderizarProdutos() {
+    atualizarResumo();
+  const pesquisa = document.getElementById("pesquisa").value.toLowerCase();
 
-    const pesquisa =
-        document
-            .getElementById("pesquisa")
-            .value
-            .toLowerCase();
+  const filtro = document.getElementById("filtroEstoque").value;
 
+  const produtosFiltrados = produtos.filter((produto) => {
+    const nome = produto.nome.toLowerCase();
 
-    const filtro =
-        document
-            .getElementById("filtroEstoque")
-            .value;
+    const codigo = produto.codigo ? produto.codigo.toLowerCase() : "";
 
+    const pesquisaEncontrada =
+      nome.includes(pesquisa) || codigo.includes(pesquisa);
 
-    const produtosFiltrados =
-        produtos.filter(produto => {
+    const quantidade = Number(produto.quantidade);
 
+    const minimo = Number(produto.estoque_minimo);
 
-            const nome =
-                produto.nome
-                    .toLowerCase();
+    let passaFiltro = true;
 
+    if (filtro === "baixo") {
+      passaFiltro = quantidade > 0 && quantidade <= minimo;
+    }
 
-            const codigo =
-                produto.codigo
-                    ?
-                    produto.codigo
-                        .toLowerCase()
-                    :
-                    "";
+    if (filtro === "normal") {
+      passaFiltro = quantidade > minimo;
+    }
 
+    if (filtro === "zerado") {
+      passaFiltro = quantidade === 0;
+    }
 
-            const pesquisaEncontrada =
-                nome.includes(pesquisa)
-                ||
-                codigo.includes(pesquisa);
+    return pesquisaEncontrada && passaFiltro;
+  });
 
-
-            const quantidade =
-                Number(
-                    produto.quantidade
-                );
-
-
-            const minimo =
-                Number(
-                    produto.estoque_minimo
-                );
-
-
-            let passaFiltro =
-                true;
-
-
-            if (filtro === "baixo") {
-
-                passaFiltro =
-                    quantidade > 0
-                    &&
-                    quantidade <= minimo;
-
-            }
-
-
-            if (filtro === "normal") {
-
-                passaFiltro =
-                    quantidade > minimo;
-
-            }
-
-
-            if (filtro === "zerado") {
-
-                passaFiltro =
-                    quantidade === 0;
-
-            }
-
-
-            return (
-                pesquisaEncontrada
-                &&
-                passaFiltro
-            );
-
-        });
-
-
-    if (
-        produtosFiltrados.length === 0
-    ) {
-
-        listaProdutos.innerHTML = `
+  if (produtosFiltrados.length === 0) {
+    listaProdutos.innerHTML = `
             <tr>
                 <td
                     colspan="9"
@@ -258,58 +165,30 @@ function renderizarProdutos() {
             </tr>
         `;
 
-        return;
+    return;
+  }
 
-    }
+  listaProdutos.innerHTML = produtosFiltrados
+    .map((produto) => {
+      const quantidade = Number(produto.quantidade);
 
+      const minimo = Number(produto.estoque_minimo);
 
-    listaProdutos.innerHTML =
-        produtosFiltrados.map(
-            produto => {
-
-
-                const quantidade =
-                    Number(
-                        produto.quantidade
-                    );
-
-
-                const minimo =
-                    Number(
-                        produto.estoque_minimo
-                    );
-
-
-                let status =
-                    `<span class="status normal">
+      let status = `<span class="status normal">
                         Normal
                     </span>`;
 
-
-                if (
-                    quantidade === 0
-                ) {
-
-                    status =
-                        `<span class="status zerado">
+      if (quantidade === 0) {
+        status = `<span class="status zerado">
                             Zerado
                         </span>`;
-
-                }
-
-                else if (
-                    quantidade <= minimo
-                ) {
-
-                    status =
-                        `<span class="status baixo">
+      } else if (quantidade <= minimo) {
+        status = `<span class="status baixo">
                             Estoque Baixo
                         </span>`;
+      }
 
-                }
-
-
-                return `
+      return `
 
                 <tr>
 
@@ -326,37 +205,25 @@ function renderizarProdutos() {
 
 
                     <td>
-                        ${
-                            produto.codigo
-                            ||
-                            "-"
-                        }
+                        ${produto.codigo || "-"}
                     </td>
 
 
                     <td>
-                        ${
-                            produto.categoria_nome
-                            ||
-                            "-"
-                        }
+                        ${produto.categoria_nome || "-"}
                     </td>
 
 
                     <td>
 
-                        ${formatarDinheiro(
-                            produto.preco_compra
-                        )}
+                        ${formatarDinheiro(produto.preco_compra)}
 
                     </td>
 
 
                     <td>
 
-                        ${formatarDinheiro(
-                            produto.preco_venda
-                        )}
+                        ${formatarDinheiro(produto.preco_venda)}
 
                     </td>
 
@@ -401,152 +268,63 @@ function renderizarProdutos() {
                 </tr>
 
                 `;
-
-            }
-        ).join("");
-
+    })
+    .join("");
 }
-
 
 function formatarDinheiro(valor) {
-
-    return Number(
-        valor || 0
-    ).toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
-
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }
-
 
 function abrirModal() {
+  document.getElementById("tituloModal").textContent = "Novo Produto";
 
-    document
-        .getElementById("tituloModal")
-        .textContent =
-        "Novo Produto";
+  form.reset();
 
+  document.getElementById("produtoId").value = "";
 
-    form.reset();
+  document.getElementById("quantidade").value = 0;
 
+  document.getElementById("estoqueMinimo").value = 5;
 
-    document
-        .getElementById("produtoId")
-        .value =
-        "";
-
-
-    document
-        .getElementById("quantidade")
-        .value =
-        0;
-
-
-    document
-        .getElementById("estoqueMinimo")
-        .value =
-        5;
-
-
-    modal.classList.add(
-        "mostrar"
-    );
-
+  modal.classList.add("mostrar");
 }
-
 
 function fecharModal() {
-
-    modal.classList.remove(
-        "mostrar"
-    );
-
+  modal.classList.remove("mostrar");
 }
 
-
 async function editarProduto(id) {
+  const produto = produtos.find((p) => p.id === id);
 
-    const produto =
-        produtos.find(
-            p => p.id === id
-        );
+  if (!produto) {
+    mostrarMensagem("Produto não encontrado", "erro");
 
+    return;
+  }
 
-    if (!produto) {
+  document.getElementById("tituloModal").textContent = "Editar Produto";
 
-        mostrarMensagem(
-            "Produto não encontrado",
-            "erro"
-        );
+  document.getElementById("produtoId").value = produto.id;
 
-        return;
+  document.getElementById("nome").value = produto.nome;
 
-    }
+  document.getElementById("codigo").value = produto.codigo || "";
 
+  document.getElementById("categoria").value = produto.categoria_id || "";
 
-    document
-        .getElementById("tituloModal")
-        .textContent =
-        "Editar Produto";
+  document.getElementById("quantidade").value = produto.quantidade;
 
+  document.getElementById("estoqueMinimo").value = produto.estoque_minimo;
 
-    document
-        .getElementById("produtoId")
-        .value =
-        produto.id;
+  document.getElementById("precoCompra").value = produto.preco_compra;
 
+  document.getElementById("precoVenda").value = produto.preco_venda;
 
-    document
-        .getElementById("nome")
-        .value =
-        produto.nome;
-
-
-    document
-        .getElementById("codigo")
-        .value =
-        produto.codigo
-        ||
-        "";
-
-
-    document
-        .getElementById("categoria")
-        .value =
-        produto.categoria_id
-        ||
-        "";
-
-
-    document
-        .getElementById("quantidade")
-        .value =
-        produto.quantidade;
-
-
-    document
-        .getElementById("estoqueMinimo")
-        .value =
-        produto.estoque_minimo;
-
-
-    document
-        .getElementById("precoCompra")
-        .value =
-        produto.preco_compra;
-
-
-    document
-        .getElementById("precoVenda")
-        .value =
-        produto.preco_venda;
-
-
-    /*
+  /*
         Quantidade não deve ser
         alterada diretamente
         quando o produto já existe.
@@ -555,352 +333,151 @@ async function editarProduto(id) {
         de movimentações.
     */
 
-    document
-        .getElementById("quantidade")
-        .disabled =
-        true;
+  document.getElementById("quantidade").disabled = true;
 
-
-    modal.classList.add(
-        "mostrar"
-    );
-
+  modal.classList.add("mostrar");
 }
-
 
 async function excluirProduto(id) {
+  const produto = produtos.find((p) => p.id === id);
 
-    const produto =
-        produtos.find(
-            p => p.id === id
-        );
+  if (!produto) {
+    return;
+  }
 
+  const confirmar = confirm(
+    `Deseja realmente excluir o produto "${produto.nome}"?`,
+  );
 
-    if (!produto) {
+  if (!confirmar) {
+    return;
+  }
 
-        return;
+  try {
+    const resposta = await fetch(`/api/produtos/${id}`, {
+      method: "DELETE",
 
+      headers,
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      mostrarMensagem(dados.erro || "Erro ao excluir produto", "erro");
+
+      return;
     }
 
+    mostrarMensagem("Produto excluído com sucesso");
 
-    const confirmar =
-        confirm(
-            `Deseja realmente excluir o produto "${produto.nome}"?`
-        );
-
-
-    if (!confirmar) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const resposta =
-            await fetch(
-                `/api/produtos/${id}`,
-                {
-                    method:
-                        "DELETE",
-
-                    headers
-                }
-            );
-
-
-        const dados =
-            await resposta.json();
-
-
-        if (!resposta.ok) {
-
-            mostrarMensagem(
-                dados.erro
-                ||
-                "Erro ao excluir produto",
-                "erro"
-            );
-
-            return;
-
-        }
-
-
-        mostrarMensagem(
-            "Produto excluído com sucesso"
-        );
-
-
-        carregarProdutos();
-
-
-    } catch (erro) {
-
-        mostrarMensagem(
-            "Erro ao conectar ao servidor",
-            "erro"
-        );
-
-    }
-
+    carregarProdutos();
+  } catch (erro) {
+    mostrarMensagem("Erro ao conectar ao servidor", "erro");
+  }
 }
 
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-form.addEventListener(
-    "submit",
-    async event => {
+  const id = document.getElementById("produtoId").value;
 
-        event.preventDefault();
+  const dados = {
+    nome: document.getElementById("nome").value,
 
+    codigo: document.getElementById("codigo").value,
 
-        const id =
-            document
-                .getElementById("produtoId")
-                .value;
+    categoria_id: document.getElementById("categoria").value || null,
 
+    preco_compra: Number(document.getElementById("precoCompra").value),
 
-        const dados = {
+    preco_venda: Number(document.getElementById("precoVenda").value),
 
-            nome:
-                document
-                    .getElementById("nome")
-                    .value,
+    estoque_minimo: Number(document.getElementById("estoqueMinimo").value),
+  };
 
-            codigo:
-                document
-                    .getElementById("codigo")
-                    .value,
-
-            categoria_id:
-                document
-                    .getElementById("categoria")
-                    .value
-                ||
-                null,
-
-            preco_compra:
-                Number(
-                    document
-                        .getElementById("precoCompra")
-                        .value
-                ),
-
-            preco_venda:
-                Number(
-                    document
-                        .getElementById("precoVenda")
-                        .value
-                ),
-
-            estoque_minimo:
-                Number(
-                    document
-                        .getElementById("estoqueMinimo")
-                        .value
-                )
-
-        };
-
-
-        /*
+  /*
             Apenas no cadastro
             enviamos a quantidade inicial.
         */
 
-        if (!id) {
+  if (!id) {
+    dados.quantidade = Number(document.getElementById("quantidade").value);
+  }
 
-            dados.quantidade =
-                Number(
-                    document
-                        .getElementById("quantidade")
-                        .value
-                );
+  try {
+    let url = "/api/produtos";
 
-        }
+    let metodo = "POST";
 
+    if (id) {
+      url = `/api/produtos/${id}`;
 
-        try {
-
-            let url =
-                "/api/produtos";
-
-
-            let metodo =
-                "POST";
-
-
-            if (id) {
-
-                url =
-                    `/api/produtos/${id}`;
-
-
-                metodo =
-                    "PUT";
-
-            }
-
-
-            const resposta =
-                await fetch(
-                    url,
-                    {
-                        method:
-                            metodo,
-
-                        headers,
-
-                        body:
-                            JSON.stringify(
-                                dados
-                            )
-                    }
-                );
-
-
-            const resultado =
-                await resposta.json();
-
-
-            if (!resposta.ok) {
-
-                mostrarMensagem(
-                    resultado.erro
-                    ||
-                    "Erro ao salvar produto",
-                    "erro"
-                );
-
-                return;
-
-            }
-
-
-            mostrarMensagem(
-                id
-                    ?
-                    "Produto atualizado com sucesso"
-                    :
-                    "Produto cadastrado com sucesso"
-            );
-
-
-            fecharModal();
-
-
-            carregarProdutos();
-
-
-        } catch (erro) {
-
-            console.error(
-                erro
-            );
-
-
-            mostrarMensagem(
-                "Erro ao conectar ao servidor",
-                "erro"
-            );
-
-        }
-
+      metodo = "PUT";
     }
-);
 
+    const resposta = await fetch(url, {
+      method: metodo,
 
-document
-    .getElementById("pesquisa")
-    .addEventListener(
-        "input",
-        renderizarProdutos
-    );
+      headers,
 
+      body: JSON.stringify(dados),
+    });
 
-document
-    .getElementById("filtroEstoque")
-    .addEventListener(
-        "change",
-        renderizarProdutos
-    );
+    const resultado = await resposta.json();
 
+    if (!resposta.ok) {
+      mostrarMensagem(resultado.erro || "Erro ao salvar produto", "erro");
 
-document
-    .getElementById("btnNovoProduto")
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById("quantidade")
-                .disabled =
-                false;
-
-            abrirModal();
-
-        }
-    );
-
-
-document
-    .getElementById("fecharModal")
-    .addEventListener(
-        "click",
-        fecharModal
-    );
-
-
-document
-    .getElementById("cancelarModal")
-    .addEventListener(
-        "click",
-        fecharModal
-    );
-
-
-document
-    .getElementById("logout")
-    .addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-
-            localStorage.removeItem(
-                "token"
-            );
-
-
-            localStorage.removeItem(
-                "usuario"
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }
-    );
-
-
-modal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target === modal
-        ) {
-
-            fecharModal();
-
-        }
-
+      return;
     }
-);
 
+    mostrarMensagem(
+      id ? "Produto atualizado com sucesso" : "Produto cadastrado com sucesso",
+    );
+
+    fecharModal();
+
+    carregarProdutos();
+  } catch (erro) {
+    console.error(erro);
+
+    mostrarMensagem("Erro ao conectar ao servidor", "erro");
+  }
+});
+
+document
+  .getElementById("pesquisa")
+  .addEventListener("input", renderizarProdutos);
+
+document
+  .getElementById("filtroEstoque")
+  .addEventListener("change", renderizarProdutos);
+
+document.getElementById("btnNovoProduto").addEventListener("click", () => {
+  document.getElementById("quantidade").disabled = false;
+
+  abrirModal();
+});
+
+document.getElementById("fecharModal").addEventListener("click", fecharModal);
+
+document.getElementById("cancelarModal").addEventListener("click", fecharModal);
+
+document.getElementById("logout").addEventListener("click", (event) => {
+  event.preventDefault();
+
+  localStorage.removeItem("token");
+
+  localStorage.removeItem("usuario");
+
+  window.location.href = "index.html";
+});
+
+modal.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    fecharModal();
+  }
+});
 
 /* INICIAR */
 

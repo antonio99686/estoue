@@ -1,78 +1,44 @@
 const form = document.getElementById("loginForm");
 
 form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-    event.preventDefault();
+  const email = document.getElementById("email").value;
 
-    const email =
-        document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
-    const senha =
-        document.getElementById("senha").value;
+  const mensagem = document.getElementById("mensagem");
 
-    const mensagem =
-        document.getElementById("mensagem");
+  mensagem.textContent = "Entrando...";
 
-    mensagem.textContent =
-        "Entrando...";
+  try {
+    const resposta = await fetch("/api/auth/login", {
+      method: "POST",
 
-    try {
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        const resposta = await fetch(
-            "/api/auth/login",
-            {
-                method: "POST",
+      body: JSON.stringify({
+        email,
+        senha,
+      }),
+    });
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+    const dados = await resposta.json();
 
-                body: JSON.stringify({
-                    email,
-                    senha
-                })
-            }
-        );
+    if (!resposta.ok) {
+      mensagem.textContent = dados.erro || "Erro ao fazer login";
 
-        const dados =
-            await resposta.json();
-
-
-        if (!resposta.ok) {
-
-            mensagem.textContent =
-                dados.erro ||
-                "Erro ao fazer login";
-
-            return;
-
-        }
-
-
-        localStorage.setItem(
-            "token",
-            dados.token
-        );
-
-
-        localStorage.setItem(
-            "usuario",
-            JSON.stringify(
-                dados.usuario
-            )
-        );
-
-
-        window.location.href =
-            "dashboard.html";
-
-
-    } catch (erro) {
-
-        mensagem.textContent =
-            "Erro ao conectar ao servidor";
-
+      return;
     }
 
+    localStorage.setItem("token", dados.token);
+
+    localStorage.setItem("usuario", JSON.stringify(dados.usuario));
+
+    window.location.href = "dashboard.html";
+  } catch (erro) {
+    mensagem.textContent = "Erro ao conectar ao servidor";
+  }
 });

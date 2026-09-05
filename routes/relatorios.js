@@ -4,80 +4,68 @@ const router = express.Router();
 const conexao = require("../config/database");
 const autenticar = require("../middleware/auth");
 
-
 /* =========================================
    RESUMO GERAL
 ========================================= */
 
 router.get("/resumo", autenticar, (req, res) => {
-
-    const sql = `
+  const sql = `
         SELECT
-            COUNT(*) AS total_produtos,
+    COUNT(*) AS total_produtos,
 
-            COALESCE(
-                SUM(quantidade),
-                0
-            ) AS total_unidades,
+    COALESCE(
+        SUM(quantidade),
+        0
+    ) AS unidades_estoque,
 
-            COALESCE(
-                SUM(
-                    quantidade *
-                    preco_compra
-                ),
-                0
-            ) AS valor_estoque,
+    COALESCE(
+        SUM(
+            quantidade * preco_compra
+        ),
+        0
+    ) AS valor_estoque,
 
-            SUM(
-                CASE
-                    WHEN quantidade = 0
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS produtos_zerados,
+    COALESCE(
+        SUM(
+            CASE
+                WHEN quantidade = 0
+                THEN 1
+                ELSE 0
+            END
+        ),
+        0
+    ) AS produtos_zerados,
 
-            SUM(
-                CASE
-                    WHEN quantidade > 0
-                    AND quantidade <= estoque_minimo
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS estoque_baixo
+    COALESCE(
+        SUM(
+            CASE
+                WHEN quantidade > 0
+                AND quantidade <= estoque_minimo
+                THEN 1
+                ELSE 0
+            END
+        ),
+        0
+    ) AS estoque_baixo
 
-        FROM produtos
+FROM produtos
     `;
 
-    conexao.query(
-        sql,
-        (erro, resultado) => {
+  conexao.query(sql, (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro });
+    }
 
-            if (erro) {
-                return res
-                    .status(500)
-                    .json({ erro });
-            }
-
-            res.json(
-                resultado[0]
-            );
-
-        }
-    );
-
+    res.json(resultado[0]);
+  });
 });
-
 
 /* =========================================
    PRODUTOS COM ESTOQUE BAIXO
 ========================================= */
 
-router.get(
-    "/estoque-baixo",
-    autenticar,
-    (req, res) => {
-
-        const sql = `
+router.get("/estoque-baixo", autenticar, (req, res) => {
+  const sql = `
             SELECT
                 produtos.*,
                 categorias.nome
@@ -99,37 +87,21 @@ router.get(
                 produtos.quantidade ASC
         `;
 
-        conexao.query(
-            sql,
-            (erro, resultado) => {
-
-                if (erro) {
-                    return res
-                        .status(500)
-                        .json({ erro });
-                }
-
-                res.json(
-                    resultado
-                );
-
-            }
-        );
-
+  conexao.query(sql, (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro });
     }
-);
 
+    res.json(resultado);
+  });
+});
 
 /* =========================================
    PRODUTOS ZERADOS
 ========================================= */
 
-router.get(
-    "/estoque-zerado",
-    autenticar,
-    (req, res) => {
-
-        const sql = `
+router.get("/estoque-zerado", autenticar, (req, res) => {
+  const sql = `
             SELECT
                 produtos.*,
                 categorias.nome
@@ -148,43 +120,23 @@ router.get(
                 produtos.nome
         `;
 
-        conexao.query(
-            sql,
-            (erro, resultado) => {
-
-                if (erro) {
-                    return res
-                        .status(500)
-                        .json({ erro });
-                }
-
-                res.json(
-                    resultado
-                );
-
-            }
-        );
-
+  conexao.query(sql, (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro });
     }
-);
 
+    res.json(resultado);
+  });
+});
 
 /* =========================================
    MOVIMENTAÇÕES POR PERÍODO
 ========================================= */
 
-router.get(
-    "/movimentacoes",
-    autenticar,
-    (req, res) => {
+router.get("/movimentacoes", autenticar, (req, res) => {
+  const { data_inicio, data_fim } = req.query;
 
-        const {
-            data_inicio,
-            data_fim
-        } = req.query;
-
-
-        let sql = `
+  let sql = `
             SELECT
                 movimentacoes.*,
 
@@ -207,84 +159,50 @@ router.get(
             WHERE 1 = 1
         `;
 
+  const parametros = [];
 
-        const parametros = [];
-
-
-        if (data_inicio) {
-
-            sql += `
+  if (data_inicio) {
+    sql += `
                 AND DATE(
                     movimentacoes.criado_em
                 ) >= ?
             `;
 
-            parametros.push(
-                data_inicio
-            );
+    parametros.push(data_inicio);
+  }
 
-        }
-
-
-        if (data_fim) {
-
-            sql += `
+  if (data_fim) {
+    sql += `
                 AND DATE(
                     movimentacoes.criado_em
                 ) <= ?
             `;
 
-            parametros.push(
-                data_fim
-            );
+    parametros.push(data_fim);
+  }
 
-        }
-
-
-        sql += `
+  sql += `
             ORDER BY
             movimentacoes.criado_em DESC
         `;
 
-
-        conexao.query(
-            sql,
-            parametros,
-            (erro, resultado) => {
-
-                if (erro) {
-                    return res
-                        .status(500)
-                        .json({ erro });
-                }
-
-                res.json(
-                    resultado
-                );
-
-            }
-        );
-
+  conexao.query(sql, parametros, (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro });
     }
-);
 
+    res.json(resultado);
+  });
+});
 
 /* =========================================
    TOTAL DE ENTRADAS E SAÍDAS
 ========================================= */
 
-router.get(
-    "/movimentacoes/resumo",
-    autenticar,
-    (req, res) => {
+router.get("/movimentacoes/resumo", autenticar, (req, res) => {
+  const { data_inicio, data_fim } = req.query;
 
-        const {
-            data_inicio,
-            data_fim
-        } = req.query;
-
-
-        let sql = `
+  let sql = `
             SELECT
 
                 COALESCE(
@@ -316,56 +234,31 @@ router.get(
             WHERE 1 = 1
         `;
 
+  const parametros = [];
 
-        const parametros = [];
-
-
-        if (data_inicio) {
-
-            sql += `
+  if (data_inicio) {
+    sql += `
                 AND DATE(criado_em) >= ?
             `;
 
-            parametros.push(
-                data_inicio
-            );
+    parametros.push(data_inicio);
+  }
 
-        }
-
-
-        if (data_fim) {
-
-            sql += `
+  if (data_fim) {
+    sql += `
                 AND DATE(criado_em) <= ?
             `;
 
-            parametros.push(
-                data_fim
-            );
+    parametros.push(data_fim);
+  }
 
-        }
-
-
-        conexao.query(
-            sql,
-            parametros,
-            (erro, resultado) => {
-
-                if (erro) {
-                    return res
-                        .status(500)
-                        .json({ erro });
-                }
-
-                res.json(
-                    resultado[0]
-                );
-
-            }
-        );
-
+  conexao.query(sql, parametros, (erro, resultado) => {
+    if (erro) {
+      return res.status(500).json({ erro });
     }
-);
 
+    res.json(resultado[0]);
+  });
+});
 
 module.exports = router;

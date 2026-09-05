@@ -1,129 +1,123 @@
 const token = localStorage.getItem("token");
 
 if (!token) {
-    window.location.href = "index.html";
+  window.location.href = "index.html";
 }
 
 const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
 };
 
 let movimentacoes = [];
 let produtos = [];
 
+const listaMovimentacoes = document.getElementById("listaMovimentacoes");
 
-const listaMovimentacoes =
-    document.getElementById(
-        "listaMovimentacoes"
+const modal = document.getElementById("modalMovimentacao");
+
+const form = document.getElementById("formMovimentacao");
+
+/* ================================
+   ATUALIZAR RESUMO
+================================ */
+
+function atualizarResumo() {
+
+  const agora = new Date();
+
+  const mesAtual = agora.getMonth();
+  const anoAtual = agora.getFullYear();
+
+  const movimentacoesMes = movimentacoes.filter((movimentacao) => {
+
+    if (!movimentacao.criado_em) {
+      return false;
+    }
+
+    const data = new Date(movimentacao.criado_em);
+
+    return (
+      data.getMonth() === mesAtual &&
+      data.getFullYear() === anoAtual
     );
+  });
 
-const modal =
-    document.getElementById(
-        "modalMovimentacao"
-    );
+  // ENTRADAS DO MÊS
+  const entradas = movimentacoesMes
+    .filter((m) => m.tipo === "ENTRADA")
+    .reduce((total, m) => {
+      return total + Number(m.quantidade || 0);
+    }, 0);
 
-const form =
-    document.getElementById(
-        "formMovimentacao"
-    );
+  // SAÍDAS DO MÊS
+  const saidas = movimentacoesMes
+    .filter((m) => m.tipo === "SAIDA")
+    .reduce((total, m) => {
+      return total + Number(m.quantidade || 0);
+    }, 0);
 
+  // ATUALIZA AS CAIXAS
+  document.getElementById("totalEntradas").textContent = entradas;
+
+  document.getElementById("totalSaidas").textContent = saidas;
+
+  document.getElementById("totalMovimentacoes").textContent =
+    movimentacoes.length;
+}
 
 /* ================================
    MENSAGENS
 ================================ */
 
-function mostrarMensagem(
-    texto,
-    tipo = "sucesso"
-) {
+function mostrarMensagem(texto, tipo = "sucesso") {
+  const mensagem = document.getElementById("mensagemMovimentacao");
 
-    const mensagem =
-        document.getElementById(
-            "mensagemMovimentacao"
-        );
+  mensagem.textContent = texto;
 
-    mensagem.textContent =
-        texto;
+  mensagem.className = `mensagem ${tipo}`;
 
-    mensagem.className =
-        `mensagem ${tipo}`;
+  setTimeout(() => {
+    mensagem.textContent = "";
 
-    setTimeout(() => {
-
-        mensagem.textContent =
-            "";
-
-        mensagem.className =
-            "mensagem";
-
-    }, 3000);
-
+    mensagem.className = "mensagem";
+  }, 3000);
 }
-
 
 /* ================================
    MENSAGEM DO MODAL
 ================================ */
 
-function mostrarMensagemModal(
-    texto,
-    tipo = "erro"
-) {
+function mostrarMensagemModal(texto, tipo = "erro") {
+  const mensagem = document.getElementById("mensagemModal");
 
-    const mensagem =
-        document.getElementById(
-            "mensagemModal"
-        );
+  mensagem.textContent = texto;
 
-    mensagem.textContent =
-        texto;
-
-    mensagem.className =
-        `mensagem ${tipo}`;
-
+  mensagem.className = `mensagem ${tipo}`;
 }
-
 
 /* ================================
    CARREGAR PRODUTOS
 ================================ */
 
 async function carregarProdutos() {
+  try {
+    const resposta = await fetch("/api/produtos", {
+      headers,
+    });
 
-    try {
+    produtos = await resposta.json();
 
-        const resposta =
-            await fetch(
-                "/api/produtos",
-                {
-                    headers
-                }
-            );
+    const select = document.getElementById("produtoId");
 
-        produtos =
-            await resposta.json();
-
-
-        const select =
-            document.getElementById(
-                "produtoId"
-            );
-
-
-        select.innerHTML =
-            `
+    select.innerHTML = `
             <option value="">
                 Selecione um produto
             </option>
             `;
 
-
-        produtos.forEach(
-            produto => {
-
-                select.innerHTML +=
-                    `
+    produtos.forEach((produto) => {
+      select.innerHTML += `
                     <option
                         value="${produto.id}"
                     >
@@ -131,33 +125,19 @@ async function carregarProdutos() {
                         (${produto.quantidade} em estoque)
                     </option>
                     `;
-
-            }
-        );
-
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao carregar produtos:",
-            erro
-        );
-
-    }
-
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar produtos:", erro);
+  }
 }
-
 
 /* ================================
    CARREGAR MOVIMENTAÇÕES
 ================================ */
 
 async function carregarMovimentacoes() {
-
-    try {
-
-        listaMovimentacoes.innerHTML =
-            `
+  try {
+    listaMovimentacoes.innerHTML = `
             <tr>
                 <td
                     colspan="7"
@@ -168,41 +148,21 @@ async function carregarMovimentacoes() {
             </tr>
             `;
 
+    const resposta = await fetch("/api/movimentacoes", {
+      headers,
+    });
 
-        const resposta =
-            await fetch(
-                "/api/movimentacoes",
-                {
-                    headers
-                }
-            );
+    if (!resposta.ok) {
+      throw new Error("Erro ao carregar movimentações");
+    }
 
+    movimentacoes = await resposta.json();
 
-        if (!resposta.ok) {
+    renderizarMovimentacoes();
+  } catch (erro) {
+    console.error(erro);
 
-            throw new Error(
-                "Erro ao carregar movimentações"
-            );
-
-        }
-
-
-        movimentacoes =
-            await resposta.json();
-
-
-        renderizarMovimentacoes();
-
-
-    } catch (erro) {
-
-        console.error(
-            erro
-        );
-
-
-        listaMovimentacoes.innerHTML =
-            `
+    listaMovimentacoes.innerHTML = `
             <tr>
                 <td
                     colspan="7"
@@ -212,74 +172,32 @@ async function carregarMovimentacoes() {
                 </td>
             </tr>
             `;
-
-    }
-
+  }
 }
-
 
 /* ================================
    RENDERIZAR TABELA
 ================================ */
 
 function renderizarMovimentacoes() {
+  const pesquisa = document
+    .getElementById("pesquisaMovimentacao")
+    .value.toLowerCase();
 
-    const pesquisa =
-        document
-            .getElementById(
-                "pesquisaMovimentacao"
-            )
-            .value
-            .toLowerCase();
+  const tipo = document.getElementById("filtroTipo").value;
 
+  const lista = movimentacoes.filter((movimentacao) => {
+    const produto = movimentacao.produto_nome.toLowerCase();
 
-    const tipo =
-        document
-            .getElementById(
-                "filtroTipo"
-            )
-            .value;
+    const passaPesquisa = produto.includes(pesquisa);
 
+    const passaTipo = tipo === "" || movimentacao.tipo === tipo;
 
-    const lista =
-        movimentacoes.filter(
-            movimentacao => {
+    return passaPesquisa && passaTipo;
+  });
 
-
-                const produto =
-                    movimentacao.produto_nome
-                        .toLowerCase();
-
-
-                const passaPesquisa =
-                    produto.includes(
-                        pesquisa
-                    );
-
-
-                const passaTipo =
-                    tipo === ""
-                    ||
-                    movimentacao.tipo ===
-                    tipo;
-
-
-                return (
-                    passaPesquisa
-                    &&
-                    passaTipo
-                );
-
-            }
-        );
-
-
-    if (
-        lista.length === 0
-    ) {
-
-        listaMovimentacoes.innerHTML =
-            `
+  if (lista.length === 0) {
+    listaMovimentacoes.innerHTML = `
             <tr>
                 <td
                     colspan="7"
@@ -290,37 +208,25 @@ function renderizarMovimentacoes() {
             </tr>
             `;
 
-        return;
+    return;
+  }
 
-    }
-
-
-    listaMovimentacoes.innerHTML =
-        lista.map(
-            movimentacao => {
-
-
-                const tipoHtml =
-                    movimentacao.tipo ===
-                    "ENTRADA"
-
-                    ?
-                    `
+  listaMovimentacoes.innerHTML = lista
+    .map((movimentacao) => {
+      const tipoHtml =
+        movimentacao.tipo === "ENTRADA"
+          ? `
                     <span class="tipo entrada">
                         📥 Entrada
                     </span>
                     `
-
-                    :
-
-                    `
+          : `
                     <span class="tipo saida">
                         📤 Saída
                     </span>
                     `;
 
-
-                return `
+      return `
                 <tr>
 
                     <td>
@@ -353,439 +259,205 @@ function renderizarMovimentacoes() {
 
                     <td>
 
-                        ${
-                            movimentacao.observacao
-                            ||
-                            "-"
-                        }
+                        ${movimentacao.observacao || "-"}
 
                     </td>
 
 
                     <td>
 
-                        ${
-                            movimentacao.usuario_nome
-                            ||
-                            "-"
-                        }
+                        ${movimentacao.usuario_nome || "-"}
 
                     </td>
 
 
                     <td>
 
-                        ${formatarData(
-                            movimentacao.criado_em
-                        )}
+                        ${formatarData(movimentacao.criado_em)}
 
                     </td>
 
                 </tr>
                 `;
-
-            }
-        ).join("");
-
+    })
+    .join("");
 }
-
 
 /* ================================
    FORMATAR DATA
 ================================ */
 
 function formatarData(data) {
-
-    return new Date(
-        data
-    ).toLocaleString(
-        "pt-BR"
-    );
-
+  return new Date(data).toLocaleString("pt-BR");
 }
-
 
 /* ================================
    ABRIR MODAL
 ================================ */
 
 function abrirModal() {
+  form.reset();
 
-    form.reset();
+  document.getElementById("estoqueAtual").textContent = "Selecione um produto";
 
+  document.getElementById("mensagemModal").textContent = "";
 
-    document
-        .getElementById(
-            "estoqueAtual"
-        )
-        .textContent =
-        "Selecione um produto";
-
-
-    document
-        .getElementById(
-            "mensagemModal"
-        )
-        .textContent =
-        "";
-
-
-    modal.classList.add(
-        "mostrar"
-    );
-
+  modal.classList.add("mostrar");
 }
-
 
 /* ================================
    FECHAR MODAL
 ================================ */
 
 function fecharModal() {
-
-    modal.classList.remove(
-        "mostrar"
-    );
-
+  modal.classList.remove("mostrar");
 }
-
 
 /* ================================
    ALTERAÇÃO DE PRODUTO
 ================================ */
 
-document
-    .getElementById(
-        "produtoId"
-    )
-    .addEventListener(
-        "change",
-        event => {
+document.getElementById("produtoId").addEventListener("change", (event) => {
+  const id = Number(event.target.value);
 
+  const produto = produtos.find((p) => p.id === id);
 
-            const id =
-                Number(
-                    event.target.value
-                );
+  const estoque = document.getElementById("estoqueAtual");
 
+  if (!produto) {
+    estoque.textContent = "Selecione um produto";
 
-            const produto =
-                produtos.find(
-                    p =>
-                        p.id === id
-                );
+    return;
+  }
 
-
-            const estoque =
-                document.getElementById(
-                    "estoqueAtual"
-                );
-
-
-            if (!produto) {
-
-                estoque.textContent =
-                    "Selecione um produto";
-
-                return;
-
-            }
-
-
-            estoque.textContent =
-                `${produto.quantidade} unidade(s)`;
-
-        }
-    );
-
+  estoque.textContent = `${produto.quantidade} unidade(s)`;
+});
 
 /* ================================
    REGISTRAR MOVIMENTAÇÃO
 ================================ */
 
-form.addEventListener(
-    "submit",
-    async event => {
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-        event.preventDefault();
+  const produtoId = Number(document.getElementById("produtoId").value);
 
+  const tipo = document.getElementById("tipoMovimentacao").value;
 
-        const produtoId =
-            Number(
-                document
-                    .getElementById(
-                        "produtoId"
-                    )
-                    .value
-            );
+  const quantidade = Number(
+    document.getElementById("quantidadeMovimentacao").value,
+  );
 
+  const observacao = document.getElementById("observacao").value;
 
-        const tipo =
-            document
-                .getElementById(
-                    "tipoMovimentacao"
-                )
-                .value;
+  const produto = produtos.find((p) => p.id === produtoId);
 
+  /* VALIDAÇÕES */
 
-        const quantidade =
-            Number(
-                document
-                    .getElementById(
-                        "quantidadeMovimentacao"
-                    )
-                    .value
-            );
+  if (!produtoId) {
+    mostrarMensagemModal("Selecione um produto");
 
+    return;
+  }
 
-        const observacao =
-            document
-                .getElementById(
-                    "observacao"
-                )
-                .value;
+  if (!tipo) {
+    mostrarMensagemModal("Selecione o tipo de movimentação");
 
+    return;
+  }
 
-        const produto =
-            produtos.find(
-                p =>
-                    p.id === produtoId
-            );
+  if (!quantidade || quantidade <= 0) {
+    mostrarMensagemModal("Informe uma quantidade válida");
 
+    return;
+  }
 
-        /* VALIDAÇÕES */
+  if (tipo === "SAIDA" && produto && quantidade > Number(produto.quantidade)) {
+    mostrarMensagemModal(
+      `Estoque insuficiente. Disponível: ${produto.quantidade}`,
+    );
 
-        if (!produtoId) {
+    return;
+  }
 
-            mostrarMensagemModal(
-                "Selecione um produto"
-            );
+  try {
+    const resposta = await fetch("/api/movimentacoes", {
+      method: "POST",
 
-            return;
+      headers,
 
-        }
+      body: JSON.stringify({
+        produto_id: produtoId,
 
+        tipo,
 
-        if (!tipo) {
+        quantidade,
 
-            mostrarMensagemModal(
-                "Selecione o tipo de movimentação"
-            );
+        observacao,
+      }),
+    });
 
-            return;
+    const resultado = await resposta.json();
 
-        }
+    if (!resposta.ok) {
+      mostrarMensagemModal(resultado.erro || "Erro ao registrar movimentação");
 
-
-        if (
-            !quantidade
-            ||
-            quantidade <= 0
-        ) {
-
-            mostrarMensagemModal(
-                "Informe uma quantidade válida"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            tipo === "SAIDA"
-            &&
-            produto
-            &&
-            quantidade >
-            Number(
-                produto.quantidade
-            )
-        ) {
-
-            mostrarMensagemModal(
-                `Estoque insuficiente. Disponível: ${produto.quantidade}`
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            const resposta =
-                await fetch(
-                    "/api/movimentacoes",
-                    {
-                        method:
-                            "POST",
-
-                        headers,
-
-                        body:
-                            JSON.stringify(
-                                {
-                                    produto_id:
-                                        produtoId,
-
-                                    tipo,
-
-                                    quantidade,
-
-                                    observacao
-                                }
-                            )
-                    }
-                );
-
-
-            const resultado =
-                await resposta.json();
-
-
-            if (!resposta.ok) {
-
-                mostrarMensagemModal(
-                    resultado.erro
-                    ||
-                    "Erro ao registrar movimentação"
-                );
-
-                return;
-
-            }
-
-
-            fecharModal();
-
-
-            mostrarMensagem(
-                "Movimentação registrada com sucesso!"
-            );
-
-
-            await carregarProdutos();
-
-
-            await carregarMovimentacoes();
-
-
-        } catch (erro) {
-
-            console.error(
-                erro
-            );
-
-
-            mostrarMensagemModal(
-                "Erro ao conectar ao servidor"
-            );
-
-        }
-
+      return;
     }
-);
 
+    fecharModal();
+
+    mostrarMensagem("Movimentação registrada com sucesso!");
+
+    await carregarProdutos();
+
+    await carregarMovimentacoes();
+  } catch (erro) {
+    console.error(erro);
+
+    mostrarMensagemModal("Erro ao conectar ao servidor");
+  }
+});
 
 /* ================================
    EVENTOS
 ================================ */
 
 document
-    .getElementById(
-        "btnNovaMovimentacao"
-    )
-    .addEventListener(
-        "click",
-        abrirModal
-    );
-
+  .getElementById("btnNovaMovimentacao")
+  .addEventListener("click", abrirModal);
 
 document
-    .getElementById(
-        "fecharModalMovimentacao"
-    )
-    .addEventListener(
-        "click",
-        fecharModal
-    );
-
+  .getElementById("fecharModalMovimentacao")
+  .addEventListener("click", fecharModal);
 
 document
-    .getElementById(
-        "cancelarMovimentacao"
-    )
-    .addEventListener(
-        "click",
-        fecharModal
-    );
-
+  .getElementById("cancelarMovimentacao")
+  .addEventListener("click", fecharModal);
 
 document
-    .getElementById(
-        "pesquisaMovimentacao"
-    )
-    .addEventListener(
-        "input",
-        renderizarMovimentacoes
-    );
-
+  .getElementById("pesquisaMovimentacao")
+  .addEventListener("input", renderizarMovimentacoes);
 
 document
-    .getElementById(
-        "filtroTipo"
-    )
-    .addEventListener(
-        "change",
-        renderizarMovimentacoes
-    );
+  .getElementById("filtroTipo")
+  .addEventListener("change", renderizarMovimentacoes);
 
+document.getElementById("logout").addEventListener("click", (event) => {
+  event.preventDefault();
 
-document
-    .getElementById(
-        "logout"
-    )
-    .addEventListener(
-        "click",
-        event => {
+  localStorage.removeItem("token");
 
-            event.preventDefault();
+  localStorage.removeItem("usuario");
 
+  window.location.href = "index.html";
+});
 
-            localStorage.removeItem(
-                "token"
-            );
-
-
-            localStorage.removeItem(
-                "usuario"
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }
-    );
-
-
-modal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            modal
-        ) {
-
-            fecharModal();
-
-        }
-
-    }
-);
-
+modal.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    fecharModal();
+  }
+});
 
 /* ================================
    INICIAR SISTEMA

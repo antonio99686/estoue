@@ -186,55 +186,146 @@
 
     <script src="js/movimentacoes.js"></script>
     <script>
-        // ===== DADOS DE EXEMPLO PARA DEMONSTRAÇÃO =====
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simula dados se o JS não carregar
-            setTimeout(() => {
-                const tbody = document.getElementById('listaMovimentacoes');
-                if (tbody && tbody.innerHTML.includes('Nenhuma movimentação encontrada')) {
-                    const movimentacoesExemplo = [
-                        { id: 1, produto: 'Teclado Mecânico', tipo: 'ENTRADA', qtd: 15, obs: 'Compra do fornecedor', usuario: 'admin', data: '2026-08-31 14:30' },
-                        { id: 2, produto: 'Mouse Gamer', tipo: 'SAIDA', qtd: 8, obs: 'Venda para cliente', usuario: 'admin', data: '2026-08-31 11:20' },
-                        { id: 3, produto: 'Monitor 24"', tipo: 'ENTRADA', qtd: 5, obs: 'Nova remessa', usuario: 'admin', data: '2026-08-30 16:45' },
-                        { id: 4, produto: 'Cabo HDMI', tipo: 'SAIDA', qtd: 12, obs: 'Venda em lote', usuario: 'admin', data: '2026-08-30 09:10' },
-                    ];
+    // ===== ATUALIZAR RESUMO DAS MOVIMENTAÇÕES =====
 
-                    tbody.innerHTML = movimentacoesExemplo.map(m => `
-                        <tr>
-                            <td><strong style="color: #2563eb;">#${String(m.id).padStart(4, '0')}</strong></td>
-                            <td><strong>${m.produto}</strong></td>
-                            <td><span class="tipo ${m.tipo.toLowerCase()}">${m.tipo === 'ENTRADA' ? '📥 Entrada' : '📤 Saída'}</span></td>
-                            <td><strong style="color: ${m.tipo === 'ENTRADA' ? '#16a34a' : '#dc2626'};">${m.qtd}</strong></td>
-                            <td style="color: #64748b; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${m.obs || '—'}</td>
-                            <td>👤 ${m.usuario}</td>
-                            <td style="font-size: 13px; color: #94a3b8;">${m.data}</td>
-                        </tr>
-                    `).join('');
+    document.addEventListener("DOMContentLoaded", async function () {
 
-                    // Atualiza contadores
-                    document.getElementById('totalEntradas').textContent = '20';
-                    document.getElementById('totalSaidas').textContent = '20';
-                    document.getElementById('totalMovimentacoes').textContent = '40';
-                    document.getElementById('infoPaginacao').textContent = 'Mostrando 4 de 4 registros';
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            return;
+        }
+
+        try {
+
+            const resposta = await fetch("/api/movimentacoes", {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 }
-            }, 300);
-        });
+            });
 
-        // ===== FILTROS =====
-        document.addEventListener('DOMContentLoaded', function() {
-            const limparBtn = document.getElementById('limparFiltros');
-            if (limparBtn) {
-                limparBtn.addEventListener('click', function() {
-                    document.getElementById('pesquisaMovimentacao').value = '';
-                    document.getElementById('filtroTipo').value = '';
-                    document.getElementById('filtroPeriodo').value = 'mes';
-                    // Dispara evento de pesquisa (se existir no JS)
-                    const event = new Event('input');
-                    document.getElementById('pesquisaMovimentacao').dispatchEvent(event);
-                });
+            if (!resposta.ok) {
+                throw new Error("Erro ao carregar movimentações");
             }
-        });
-    </script>
+
+            const movimentacoes = await resposta.json();
+
+            // ================================
+            // DATA ATUAL
+            // ================================
+
+            const agora = new Date();
+
+            const mesAtual = agora.getMonth();
+            const anoAtual = agora.getFullYear();
+
+            // ================================
+            // MOVIMENTAÇÕES DO MÊS
+            // ================================
+
+            const movimentacoesMes = movimentacoes.filter(m => {
+
+                if (!m.criado_em) return false;
+
+                const data = new Date(m.criado_em);
+
+                return (
+                    data.getMonth() === mesAtual &&
+                    data.getFullYear() === anoAtual
+                );
+            });
+
+            // ================================
+            // ENTRADAS
+            // ================================
+
+            const totalEntradas = movimentacoesMes
+                .filter(m => String(m.tipo).toUpperCase() === "ENTRADA")
+                .reduce((total, m) => {
+                    return total + Number(m.quantidade || 0);
+                }, 0);
+
+            // ================================
+            // SAÍDAS
+            // ================================
+
+            const totalSaidas = movimentacoesMes
+                .filter(m => String(m.tipo).toUpperCase() === "SAIDA")
+                .reduce((total, m) => {
+                    return total + Number(m.quantidade || 0);
+                }, 0);
+
+            // ================================
+            // ATUALIZA AS CAIXAS
+            // ================================
+
+            document.getElementById("totalEntradas").textContent =
+                totalEntradas;
+
+            document.getElementById("totalSaidas").textContent =
+                totalSaidas;
+
+            document.getElementById("totalMovimentacoes").textContent =
+                movimentacoes.length;
+
+            // ================================
+            // PAGINAÇÃO
+            // ================================
+
+            const info = document.getElementById("infoPaginacao");
+
+            if (info) {
+                info.textContent =
+                    `Mostrando ${movimentacoes.length} de ${movimentacoes.length} registros`;
+            }
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao atualizar resumo:",
+                erro
+            );
+
+        }
+    });
+
+
+    // ===== FILTRO LIMPAR =====
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const limparBtn =
+            document.getElementById("limparFiltros");
+
+        if (limparBtn) {
+
+            limparBtn.addEventListener("click", function () {
+
+                document.getElementById(
+                    "pesquisaMovimentacao"
+                ).value = "";
+
+                document.getElementById(
+                    "filtroTipo"
+                ).value = "";
+
+                document.getElementById(
+                    "filtroPeriodo"
+                ).value = "mes";
+
+                const event = new Event("input");
+
+                document.getElementById(
+                    "pesquisaMovimentacao"
+                ).dispatchEvent(event);
+
+            });
+
+        }
+
+    });
+</script>
 </body>
 
 </html>

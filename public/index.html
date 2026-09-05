@@ -2,120 +2,242 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>EstoquePro - Login</title>
-    <link rel="stylesheet" href="css/style.css" />
   </head>
+  <style>
+    /* ===== RESET E BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== CARD DE LOGIN ===== */
+    .login-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 48px 36px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .login-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+    }
+
+    /* ===== TÍTULO ===== */
+    .login-card h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .login-card h1::before {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      margin: 0 auto 12px;
+      border-radius: 2px;
+    }
+
+    /* ===== SUBTÍTULO ===== */
+    .login-card > p {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      margin-bottom: 32px;
+    }
+
+    /* ===== FORMULÁRIO ===== */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ===== INPUTS ===== */
+    form input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    form input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    form input:focus {
+      border-color: #667eea;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    }
+
+    form input:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ===== BOTÃO ===== */
+    form button {
+      width: 100%;
+      padding: 16px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    form button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.15),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    form button:hover::before {
+      left: 100%;
+    }
+
+    form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    form button:active {
+      transform: scale(0.98);
+    }
+
+    /* ===== MENSAGEM ===== */
+    #mensagem {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      min-height: 24px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    #mensagem.erro {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+
+    #mensagem.sucesso {
+      color: #51cf66;
+      background: rgba(81, 207, 102, 0.1);
+      border: 1px solid rgba(81, 207, 102, 0.2);
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 32px 20px;
+      }
+
+      .login-card h1 {
+        font-size: 28px;
+      }
+
+      form input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+
+      form button {
+        padding: 14px;
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .login-card {
+        padding: 24px 16px;
+      }
+
+      .login-card h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
   <body class="login-body">
-    <!-- ========== FUNDO COM DECORAÇÃO ========== -->
-    <div class="login-background">
-      <div class="login-bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-      </div>
-    </div>
-
-    <!-- ========== CONTAINER PRINCIPAL ========== -->
     <div class="login-container">
       <div class="login-card">
-        <!-- LOGO -->
-        <div class="login-logo">
-          <div class="logo-icon">📦</div>
-          <h1>Estoque<span>Pro</span></h1>
-        </div>
+        <h1>📦 EstoquePro</h1>
 
-        <p class="login-subtitle">Sistema de Controle de Estoque</p>
+        <p>Sistema de Controle de Estoque</p>
 
-        <!-- FORMULÁRIO -->
         <form id="loginForm">
-          <div class="input-group">
-            <label for="email">📧 E-mail</label>
-            <input 
-              type="email" 
-              id="email" 
-              placeholder="seu@email.com" 
-              required 
-              autocomplete="email"
-            />
-          </div>
+          <input type="email" id="email" placeholder="Seu e-mail" required />
 
-          <div class="input-group">
-            <label for="senha">🔒 Senha</label>
-            <div class="password-wrapper">
-              <input 
-                type="password" 
-                id="senha" 
-                placeholder="Digite sua senha" 
-                required 
-                autocomplete="current-password"
-              />
-              <button type="button" class="toggle-password" id="toggleSenha" aria-label="Mostrar senha">
-                👁️
-              </button>
-            </div>
-          </div>
+          <input type="password" id="senha" placeholder="Sua senha" required />
 
-          <div class="login-options">
-            <label class="checkbox-label">
-              <input type="checkbox" id="lembrar" />
-              <span class="checkmark"></span>
-              Lembrar-me
-            </label>
-            <a href="#" class="forgot-password">Esqueceu a senha?</a>
-          </div>
-
-          <button type="submit" class="btn-login">
-            <span>Entrar</span>
-            <span class="btn-icon">→</span>
-          </button>
+          <button type="submit">Entrar</button>
         </form>
 
-        <!-- MENSAGEM DE RETORNO -->
-        <div id="mensagem" class="login-mensagem"></div>
-
-        <!-- RODAPÉ -->
-        <div class="login-footer">
-          <p>Não tem uma conta? <a href="#">Criar conta</a></p>
-          <p class="version">v2.0.0</p>
-        </div>
+        <p id="mensagem"></p>
       </div>
     </div>
 
     <script src="js/login.js"></script>
-    <script>
-      // ===== TOGGLE SENHA =====
-      document.addEventListener('DOMContentLoaded', function() {
-        const toggleBtn = document.getElementById('toggleSenha');
-        const senhaInput = document.getElementById('senha');
-
-        if (toggleBtn && senhaInput) {
-          toggleBtn.addEventListener('click', function() {
-            const type = senhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            senhaInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
-          });
-        }
-      });
-
-      // ===== VALIDAÇÃO DE E-MAIL EM TEMPO REAL =====
-      document.addEventListener('DOMContentLoaded', function() {
-        const emailInput = document.getElementById('email');
-        if (emailInput) {
-          emailInput.addEventListener('input', function() {
-            const valor = this.value;
-            const mensagem = document.getElementById('mensagem');
-            if (valor && !valor.includes('@')) {
-              mensagem.textContent = '⚠️ Digite um e-mail válido';
-              mensagem.className = 'login-mensagem erro';
-            } else {
-              mensagem.textContent = '';
-              mensagem.className = 'login-mensagem';
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>
