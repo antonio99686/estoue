@@ -2,242 +2,597 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>EstoquePro - Login</title>
-  </head>
-  <style>
-    /* ===== RESET E BASE ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* ===== CONTAINER PRINCIPAL ===== */
-    .login-container {
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ===== CARD DE LOGIN ===== */
-    .login-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 48px 36px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-    }
-
-    .login-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
-    }
-
-    /* ===== TÍTULO ===== */
-    .login-card h1 {
-      font-size: 36px;
-      font-weight: 700;
-      color: #fff;
-      text-align: center;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-
-    .login-card h1::before {
-      content: "";
-      display: block;
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      margin: 0 auto 12px;
-      border-radius: 2px;
-    }
-
-    /* ===== SUBTÍTULO ===== */
-    .login-card > p {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-      font-weight: 300;
-      letter-spacing: 0.5px;
-      margin-bottom: 32px;
-    }
-
-    /* ===== FORMULÁRIO ===== */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* ===== INPUTS ===== */
-    form input {
-      width: 100%;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 2px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      color: #fff;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      outline: none;
-    }
-
-    form input::placeholder {
-      color: rgba(255, 255, 255, 0.3);
-    }
-
-    form input:focus {
-      border-color: #667eea;
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-    }
-
-    form input:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    /* ===== BOTÃO ===== */
-    form button {
-      width: 100%;
-      padding: 16px;
-      margin-top: 8px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    form button::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.15),
-        transparent
-      );
-      transition: left 0.6s ease;
-    }
-
-    form button:hover::before {
-      left: 100%;
-    }
-
-    form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
-    }
-
-    form button:active {
-      transform: scale(0.98);
-    }
-
-    /* ===== MENSAGEM ===== */
-    #mensagem {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 14px;
-      min-height: 24px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    #mensagem.erro {
-      color: #ff6b6b;
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.2);
-    }
-
-    #mensagem.sucesso {
-      color: #51cf66;
-      background: rgba(81, 207, 102, 0.1);
-      border: 1px solid rgba(81, 207, 102, 0.2);
-    }
-
-    /* ===== RESPONSIVIDADE ===== */
-    @media (max-width: 480px) {
-      .login-card {
-        padding: 32px 20px;
+    <style>
+      /* ===== RESET E BASE ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* ===== FUNDO DECORATIVO ===== */
+      body::before,
+      body::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.15;
+        animation: floatShape 20s infinite alternate ease-in-out;
+      }
+
+      body::before {
+        width: 500px;
+        height: 500px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: -150px;
+        left: -150px;
+        animation-delay: 0s;
+      }
+
+      body::after {
+        width: 400px;
+        height: 400px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: -100px;
+        right: -100px;
+        animation-delay: -5s;
+      }
+
+      @keyframes floatShape {
+        0% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        33% {
+          transform: translate(30px, -30px) scale(1.1) rotate(120deg);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.9) rotate(240deg);
+        }
+        100% {
+          transform: translate(10px, -10px) scale(1.05) rotate(360deg);
+        }
+      }
+
+      /* ===== CONTAINER PRINCIPAL ===== */
+      .login-container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== CARD DE LOGIN ===== */
+      .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 48px 36px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .login-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+      }
+
+      /* ===== LOGO ===== */
+      .logo-wrapper {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .logo-icon {
+        font-size: 48px;
+        display: inline-block;
+        animation: pulseIcon 3s infinite ease-in-out;
+        filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.4));
+        margin-bottom: 8px;
+      }
+
+      @keyframes pulseIcon {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.08) rotate(-5deg);
+        }
+      }
+
+      /* ===== TÍTULO ===== */
       .login-card h1 {
-        font-size: 28px;
+        font-size: 36px;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        letter-spacing: -0.5px;
+        margin-bottom: 6px;
+      }
+
+      .login-card h1 span {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .login-card h1::after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        margin: 12px auto 0;
+        border-radius: 2px;
+      }
+
+      /* ===== SUBTÍTULO ===== */
+      .login-card > p {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+        margin-bottom: 32px;
+      }
+
+      /* ===== FORMULÁRIO ===== */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* ===== INPUTS ===== */
+      .input-group {
+        position: relative;
       }
 
       form input {
-        padding: 12px 16px;
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      form input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      form input:focus {
+        border-color: #667eea;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+      }
+
+      form input:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      form input:focus + .input-icon,
+      form input:not(:placeholder-shown) + .input-icon {
+        opacity: 1;
+      }
+
+      /* ===== ÍCONES NOS INPUTS ===== */
+      .input-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        opacity: 0.3;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      /* ===== BOTÃO DE SENHA ===== */
+      .password-toggle {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        font-size: 18px;
+        padding: 4px;
+        transition: color 0.3s ease;
+        line-height: 1;
+      }
+
+      .password-toggle:hover {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* ===== OPÇÕES ===== */
+      .login-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 4px 0 8px;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        display: none;
+      }
+
+      .checkmark {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .checkbox-label input:checked + .checkmark {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: #667eea;
+      }
+
+      .checkbox-label input:checked + .checkmark::after {
+        content: "✓";
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .checkbox-label:hover .checkmark {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .forgot-password {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password:hover {
+        color: #667eea;
+      }
+
+      /* ===== BOTÃO ===== */
+      form button {
+        width: 100%;
+        padding: 16px;
+        margin-top: 8px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      form button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+
+      form button:hover::before {
+        left: 100%;
+      }
+
+      form button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      form button:active {
+        transform: scale(0.98);
+      }
+
+      .btn-icon {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+      }
+
+      form button:hover .btn-icon {
+        transform: translateX(4px);
+      }
+
+      /* ===== MENSAGEM ===== */
+      #mensagem {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 14px;
+        min-height: 24px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      #mensagem.erro {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+      }
+
+      #mensagem.sucesso {
+        color: #51cf66;
+        background: rgba(81, 207, 102, 0.1);
+        border: 1px solid rgba(81, 207, 102, 0.2);
+      }
+
+      /* ===== RODAPÉ ===== */
+      .login-footer {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .login-footer p {
+        color: rgba(255, 255, 255, 0.4);
         font-size: 14px;
       }
 
-      form button {
-        padding: 14px;
-        font-size: 15px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .login-card {
-        padding: 24px 16px;
+      .login-footer a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
       }
 
-      .login-card h1 {
-        font-size: 24px;
+      .login-footer a:hover {
+        color: #764ba2;
+        text-decoration: underline;
       }
-    }
-  </style>
+
+      .version {
+        margin-top: 6px;
+        font-size: 12px !important;
+        color: rgba(255, 255, 255, 0.2) !important;
+        letter-spacing: 1px;
+      }
+
+      /* ===== RESPONSIVIDADE ===== */
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 32px 20px;
+        }
+
+        .login-card h1 {
+          font-size: 28px;
+        }
+
+        .logo-icon {
+          font-size: 40px;
+        }
+
+        form input {
+          padding: 12px 16px;
+          font-size: 14px;
+        }
+
+        form button {
+          padding: 14px;
+          font-size: 15px;
+        }
+
+        .login-options {
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .login-card {
+          padding: 24px 16px;
+        }
+
+        .login-card h1 {
+          font-size: 24px;
+        }
+
+        .logo-icon {
+          font-size: 34px;
+        }
+      }
+    </style>
+  </head>
   <body class="login-body">
     <div class="login-container">
       <div class="login-card">
-        <h1>📦 EstoquePro</h1>
+        <!-- LOGO -->
+        <div class="logo-wrapper">
+          <div class="logo-icon">📦</div>
+          <h1>Estoque<span>Pro</span></h1>
+        </div>
 
         <p>Sistema de Controle de Estoque</p>
 
+        <!-- FORMULÁRIO -->
         <form id="loginForm">
-          <input type="email" id="email" placeholder="Seu e-mail" required />
+          <div class="input-group">
+            <input type="email" id="email" placeholder="Seu e-mail" required />
+            <span class="input-icon">✉️</span>
+          </div>
 
-          <input type="password" id="senha" placeholder="Sua senha" required />
+          <div class="input-group">
+            <input
+              type="password"
+              id="senha"
+              placeholder="Sua senha"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              id="toggleSenha"
+              aria-label="Mostrar senha"
+            >
+              👁️
+            </button>
+          </div>
 
-          <button type="submit">Entrar</button>
+          <div class="login-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="lembrar" />
+              <span class="checkmark"></span>
+              Lembrar-me
+            </label>
+            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+          </div>
+
+          <button type="submit">
+            Entrar
+            <span class="btn-icon">→</span>
+          </button>
         </form>
 
         <p id="mensagem"></p>
+
+        <!-- RODAPÉ -->
+        <div class="login-footer">
+          <p>Não tem uma conta? <a href="#">Criar conta</a></p>
+          <p class="version">v2.0.0</p>
+        </div>
       </div>
     </div>
 
-    <script src="js/login.js"></script>
+    <script>
+      // ===== TOGGLE SENHA =====
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("toggleSenha");
+        const senhaInput = document.getElementById("senha");
+
+        if (toggleBtn && senhaInput) {
+          toggleBtn.addEventListener("click", function () {
+            const type =
+              senhaInput.getAttribute("type") === "password" ? "text" : "password";
+            senhaInput.setAttribute("type", type);
+            this.textContent = type === "password" ? "👁️" : "👁️‍🗨️";
+          });
+        }
+      });
+
+      // ===== VALIDAÇÃO DE E-MAIL EM TEMPO REAL =====
+      document.addEventListener("DOMContentLoaded", function () {
+        const emailInput = document.getElementById("email");
+        const mensagem = document.getElementById("mensagem");
+
+        if (emailInput && mensagem) {
+          emailInput.addEventListener("input", function () {
+            const valor = this.value.trim();
+            if (valor && !valor.includes("@")) {
+              mensagem.textContent = "⚠️ Digite um e-mail válido";
+              mensagem.className = "mensagem erro";
+            } else if (valor && valor.includes("@")) {
+              mensagem.textContent = "✅ E-mail válido";
+              mensagem.className = "mensagem sucesso";
+              setTimeout(() => {
+                if (mensagem.textContent === "✅ E-mail válido") {
+                  mensagem.textContent = "";
+                  mensagem.className = "";
+                }
+              }, 2000);
+            } else {
+              mensagem.textContent = "";
+              mensagem.className = "";
+            }
+          });
+        }
+      });
+
+      // ===== SUBMISSÃO DO FORMULÁRIO =====
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("loginForm");
+        const mensagem = document.getElementById("mensagem");
+
+        if (form && mensagem) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value.trim();
+
+            if (!email || !senha) {
+              mensagem.textContent = "⚠️ Preencha todos os campos";
+              mensagem.className = "mensagem erro";
+              return;
+            }
+
+            if (!email.includes("@")) {
+              mensagem.textContent = "⚠️ Digite um e-mail válido";
+              mensagem.className = "mensagem erro";
+              return;
+            }
+
+            mensagem.textContent = "🔄 Autenticando...";
+            mensagem.className = "mensagem";
+
+            setTimeout(() => {
+              mensagem.textContent = "✅ Login realizado com sucesso!";
+              mensagem.className = "mensagem sucesso";
+
+              setTimeout(() => {
+                mensagem.textContent = "🚀 Redirecionando...";
+              }, 1500);
+            }, 1200);
+          });
+        }
+      });
+    </script>
   </body>
 </html>
