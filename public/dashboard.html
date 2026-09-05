@@ -29,8 +29,11 @@
             <h1>📊 Dashboard</h1>
             <p>Visão geral do seu estoque em tempo real</p>
           </div>
-          <div style="display: flex; gap: 12px;">
-            <button class="btn btn-secondary" onclick="window.location.reload()">
+          <div style="display: flex; gap: 12px">
+            <button
+              class="btn btn-secondary"
+              onclick="window.location.reload()"
+            >
               🔄 Atualizar
             </button>
             <button class="btn btn-primary" onclick="gerarRelatorio()">
@@ -44,7 +47,14 @@
           <div class="card">
             <h3>📦 Total de Produtos</h3>
             <span id="totalProdutos">0</span>
-            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+            <small
+              style="
+                color: #94a3b8;
+                font-size: 13px;
+                margin-top: 8px;
+                display: block;
+              "
+            >
               Cadastrados no sistema
             </small>
           </div>
@@ -52,56 +62,99 @@
           <div class="card">
             <h3>📊 Unidades em Estoque</h3>
             <span id="totalEstoque">0</span>
-            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+            <small
+              style="
+                color: #94a3b8;
+                font-size: 13px;
+                margin-top: 8px;
+                display: block;
+              "
+            >
               Total de itens disponíveis
             </small>
           </div>
 
-          <div class="card" style="border-color: #fef3c7;">
+          <div class="card" style="border-color: #fef3c7">
             <h3>⚠️ Estoque Baixo</h3>
-            <span id="estoqueBaixo" style="color: #d97706;">0</span>
-            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+            <span id="estoqueBaixo" style="color: #d97706">0</span>
+            <small
+              style="
+                color: #94a3b8;
+                font-size: 13px;
+                margin-top: 8px;
+                display: block;
+              "
+            >
               Produtos com quantidade crítica
             </small>
           </div>
 
-          <div class="card" style="border-color: #fee2e2;">
+          <div class="card" style="border-color: #fee2e2">
             <h3>🚫 Sem Estoque</h3>
-            <span id="estoqueZerado" style="color: #dc2626;">0</span>
-            <small style="color: #94a3b8; font-size: 13px; margin-top: 8px; display: block;">
+            <span id="estoqueZerado" style="color: #dc2626">0</span>
+            <small
+              style="
+                color: #94a3b8;
+                font-size: 13px;
+                margin-top: 8px;
+                display: block;
+              "
+            >
               Produtos esgotados
             </small>
           </div>
         </div>
 
         <!-- ===== INFORMAÇÕES ADICIONAIS ===== -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 30px;">
-          
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-top: 30px;
+          "
+        >
           <!-- ÚLTIMAS MOVIMENTAÇÕES -->
           <div class="relatorio-box">
             <h2>🔄 Últimas Movimentações</h2>
-            <div id="ultimasMovimentacoes" style="margin-top: 16px;">
-              <p style="color: #94a3b8; text-align: center; padding: 30px 0;">
+            <div id="ultimasMovimentacoes" style="margin-top: 16px">
+              <p style="color: #94a3b8; text-align: center; padding: 30px 0">
                 Nenhuma movimentação registrada
               </p>
             </div>
-            <div style="margin-top: 16px; text-align: right;">
-              <a href="movimentacoes.html" style="color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px;">
+            <div style="margin-top: 16px; text-align: right">
+              <a
+                href="movimentacoes.html"
+                style="
+                  color: #3b82f6;
+                  text-decoration: none;
+                  font-weight: 600;
+                  font-size: 14px;
+                "
+              >
                 Ver todas →
               </a>
             </div>
           </div>
 
           <!-- PRODUTOS COM ESTOQUE BAIXO -->
-          <div class="relatorio-box" style="border-color: #fef3c7;">
+          <div class="relatorio-box" style="border-color: #fef3c7">
             <h2>⚠️ Alertas de Estoque</h2>
-            <div id="alertasEstoque" style="margin-top: 16px;">
-              <p style="color: #94a3b8; text-align: center; padding: 30px 0;">
+            <div id="alertasEstoque" style="margin-top: 16px">
+              <p style="color: #94a3b8; text-align: center; padding: 30px 0">
                 Nenhum produto com estoque baixo
               </p>
             </div>
-            <div style="margin-top: 16px; text-align: right;">
-              <a href="produtos.html" style="color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 14px;">
+            <div style="margin-top: 16px; text-align: right">
+              <a
+                href="produtos.html"
+                style="
+                  color: #3b82f6;
+                  text-decoration: none;
+                  font-weight: 600;
+                  font-size: 14px;
+                "
+              >
                 Gerenciar produtos →
               </a>
             </div>
@@ -109,31 +162,132 @@
         </div>
 
         <!-- ===== RESUMO RÁPIDO ===== -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; padding: 20px; background: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0;">
-          <div style="text-align: center; padding: 12px;">
-            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Entradas (mês)</div>
-            <div style="font-size: 24px; font-weight: 700; color: #16a34a;" id="entradasMes">0</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+          "
+        >
+          <div style="text-align: center; padding: 12px">
+            <div
+              style="
+                font-size: 13px;
+                color: #94a3b8;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+              "
+            >
+              Entradas (mês)
+            </div>
+            <div
+              style="font-size: 24px; font-weight: 700; color: #16a34a"
+              id="entradasMes"
+            >
+              0
+            </div>
           </div>
-          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
-            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Saídas (mês)</div>
-            <div style="font-size: 24px; font-weight: 700; color: #dc2626;" id="saidasMes">0</div>
+          <div
+            style="
+              text-align: center;
+              padding: 12px;
+              border-left: 1px solid #f1f5f9;
+            "
+          >
+            <div
+              style="
+                font-size: 13px;
+                color: #94a3b8;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+              "
+            >
+              Saídas (mês)
+            </div>
+            <div
+              style="font-size: 24px; font-weight: 700; color: #dc2626"
+              id="saidasMes"
+            >
+              0
+            </div>
           </div>
-          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
-            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Saldo Total</div>
-            <div style="font-size: 24px; font-weight: 700; color: #0f172a;" id="saldoTotal">R$ 0,00</div>
+          <div
+            style="
+              text-align: center;
+              padding: 12px;
+              border-left: 1px solid #f1f5f9;
+            "
+          >
+            <div
+              style="
+                font-size: 13px;
+                color: #94a3b8;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+              "
+            >
+              Saldo Total
+            </div>
+            <div
+              style="font-size: 24px; font-weight: 700; color: #0f172a"
+              id="saldoTotal"
+            >
+              R$ 0,00
+            </div>
           </div>
-          <div style="text-align: center; padding: 12px; border-left: 1px solid #f1f5f9;">
-            <div style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">Categorias</div>
-            <div style="font-size: 24px; font-weight: 700; color: #3b82f6;" id="totalCategorias">0</div>
+          <div
+            style="
+              text-align: center;
+              padding: 12px;
+              border-left: 1px solid #f1f5f9;
+            "
+          >
+            <div
+              style="
+                font-size: 13px;
+                color: #94a3b8;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+              "
+            >
+              Categorias
+            </div>
+            <div
+              style="font-size: 24px; font-weight: 700; color: #3b82f6"
+              id="totalCategorias"
+            >
+              0
+            </div>
           </div>
         </div>
 
         <!-- ===== FOOTER ===== -->
-        <div style="margin-top: 40px; padding: 16px 0; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <span style="color: #94a3b8; font-size: 14px;">
-            📅 Última atualização: <span id="ultimaAtualizacao">--/--/---- --:--</span>
+        <div
+          style="
+            margin-top: 40px;
+            padding: 16px 0;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+          "
+        >
+          <span style="color: #94a3b8; font-size: 14px">
+            📅 Última atualização:
+            <span id="ultimaAtualizacao">--/--/---- --:--</span>
           </span>
-          <span style="color: #94a3b8; font-size: 14px;">
+          <span style="color: #94a3b8; font-size: 14px">
             🟢 Sistema operacional
           </span>
         </div>
@@ -141,318 +295,165 @@
     </div>
 
     <script src="js/dashboard.js"></script>
-  <script>
+    <script>
+      // =====================================================
+      // DATA / HORA
+      // =====================================================
 
-  // =====================================================
-  // DATA / HORA
-  // =====================================================
+      function atualizarDataHora() {
+        const agora = new Date();
 
-  function atualizarDataHora() {
+        const data = agora.toLocaleDateString("pt-BR");
 
-    const agora = new Date();
+        const hora = agora.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
-    const data =
-      agora.toLocaleDateString("pt-BR");
+        const elemento = document.getElementById("ultimaAtualizacao");
 
-    const hora =
-      agora.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-    const elemento =
-      document.getElementById("ultimaAtualizacao");
-
-    if (elemento) {
-      elemento.textContent =
-        `${data} ${hora}`;
-    }
-
-  }
-
-  atualizarDataHora();
-
-  setInterval(
-    atualizarDataHora,
-    60000
-  );
-
-
-  // =====================================================
-  // GERAR RELATÓRIO
-  // =====================================================
-
-  function gerarRelatorio() {
-
-    alert(
-      "📋 Gerando relatório...\nFunção em desenvolvimento."
-    );
-
-  }
-
-
-  // =====================================================
-  // DASHBOARD
-  // =====================================================
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
-
-      const token =
-        localStorage.getItem("token");
-
-      if (!token) {
-
-        console.error(
-          "Token não encontrado."
-        );
-
-        return;
-
+        if (elemento) {
+          elemento.textContent = `${data} ${hora}`;
+        }
       }
 
+      atualizarDataHora();
 
-      // =================================================
-      // CARREGAR PRODUTOS
-      // =================================================
+      setInterval(atualizarDataHora, 60000);
 
-      let produtos = [];
+      // =====================================================
+      // GERAR RELATÓRIO
+      // =====================================================
 
-      try {
+      function gerarRelatorio() {
+        alert("📋 Gerando relatório...\nFunção em desenvolvimento.");
+      }
 
-        const resposta =
-          await fetch(
-            "/api/produtos",
-            {
-              headers: {
-                "Authorization":
-                  `Bearer ${token}`,
-                "Content-Type":
-                  "application/json"
-              }
-            }
-          );
+      // =====================================================
+      // DASHBOARD
+      // =====================================================
 
+      document.addEventListener("DOMContentLoaded", async function () {
+        const token = localStorage.getItem("token");
 
-        if (!resposta.ok) {
+        if (!token) {
+          console.error("Token não encontrado.");
 
-          throw new Error(
-            "Não foi possível carregar os produtos."
-          );
-
+          return;
         }
 
+        // =================================================
+        // CARREGAR PRODUTOS
+        // =================================================
 
-        produtos =
-          await resposta.json();
+        let produtos = [];
 
-
-        if (!Array.isArray(produtos)) {
-
-          produtos = [];
-
-        }
-
-
-        // ===============================================
-        // TOTAL DE PRODUTOS
-        // ===============================================
-
-        document.getElementById(
-          "totalProdutos"
-        ).textContent =
-          produtos.length;
-
-
-        // ===============================================
-        // UNIDADES EM ESTOQUE
-        // ===============================================
-
-        const totalEstoque =
-          produtos.reduce(
-            (total, produto) => {
-
-              return total +
-                Number(
-                  produto.quantidade || 0
-                );
-
+        try {
+          const resposta = await fetch("/api/produtos", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
-            0
-          );
+          });
 
-
-        document.getElementById(
-          "totalEstoque"
-        ).textContent =
-          totalEstoque;
-
-
-        // ===============================================
-        // ESTOQUE BAIXO
-        // ===============================================
-
-        const estoqueBaixo =
-          produtos.filter(
-            produto => {
-
-              const quantidade =
-                Number(
-                  produto.quantidade || 0
-                );
-
-              const minimo =
-                Number(
-                  produto.estoque_minimo || 0
-                );
-
-              return (
-                quantidade > 0 &&
-                quantidade <= minimo
-              );
-
-            }
-          );
-
-
-        document.getElementById(
-          "estoqueBaixo"
-        ).textContent =
-          estoqueBaixo.length;
-
-
-        // ===============================================
-        // SEM ESTOQUE
-        // ===============================================
-
-        const estoqueZerado =
-          produtos.filter(
-            produto => {
-
-              return Number(
-                produto.quantidade || 0
-              ) === 0;
-
-            }
-          );
-
-
-        document.getElementById(
-          "estoqueZerado"
-        ).textContent =
-          estoqueZerado.length;
-
-
-        // ===============================================
-        // CATEGORIAS
-        // ===============================================
-
-        const categorias =
-          new Set();
-
-
-        produtos.forEach(
-          produto => {
-
-            if (
-              produto.categoria_id
-            ) {
-
-              categorias.add(
-                produto.categoria_id
-              );
-
-            }
-
-            else if (
-              produto.categoria_nome
-            ) {
-
-              categorias.add(
-                produto.categoria_nome
-              );
-
-            }
-
-            else if (
-              produto.categoria
-            ) {
-
-              categorias.add(
-                produto.categoria
-              );
-
-            }
-
+          if (!resposta.ok) {
+            throw new Error("Não foi possível carregar os produtos.");
           }
-        );
 
+          produtos = await resposta.json();
 
-        document.getElementById(
-          "totalCategorias"
-        ).textContent =
-          categorias.size;
+          if (!Array.isArray(produtos)) {
+            produtos = [];
+          }
 
+          // ===============================================
+          // TOTAL DE PRODUTOS
+          // ===============================================
 
-        // ===============================================
-        // SALDO TOTAL
-        // ===============================================
+          document.getElementById("totalProdutos").textContent =
+            produtos.length;
 
-        const saldoTotal =
-          produtos.reduce(
-            (total, produto) => {
+          // ===============================================
+          // UNIDADES EM ESTOQUE
+          // ===============================================
 
-              const quantidade =
-                Number(
-                  produto.quantidade || 0
-                );
+          const totalEstoque = produtos.reduce((total, produto) => {
+            return total + Number(produto.quantidade || 0);
+          }, 0);
 
+          document.getElementById("totalEstoque").textContent = totalEstoque;
 
-              const precoCompra =
-                Number(
-                  produto.preco_compra || 0
-                );
+          // ===============================================
+          // ESTOQUE BAIXO
+          // ===============================================
 
+          const estoqueBaixo = produtos.filter((produto) => {
+            const quantidade = Number(produto.quantidade || 0);
 
-              return total +
-                (
-                  quantidade *
-                  precoCompra
-                );
+            const minimo = Number(produto.estoque_minimo || 0);
 
-            },
-            0
-          );
+            return quantidade > 0 && quantidade <= minimo;
+          });
 
+          document.getElementById("estoqueBaixo").textContent =
+            estoqueBaixo.length;
 
-        document.getElementById(
-          "saldoTotal"
-        ).textContent =
-          saldoTotal.toLocaleString(
-            "pt-BR",
-            {
-              style: "currency",
-              currency: "BRL"
+          // ===============================================
+          // SEM ESTOQUE
+          // ===============================================
+
+          const estoqueZerado = produtos.filter((produto) => {
+            return Number(produto.quantidade || 0) === 0;
+          });
+
+          document.getElementById("estoqueZerado").textContent =
+            estoqueZerado.length;
+
+          // ===============================================
+          // CATEGORIAS
+          // ===============================================
+
+          const categorias = new Set();
+
+          produtos.forEach((produto) => {
+            if (produto.categoria_id) {
+              categorias.add(produto.categoria_id);
+            } else if (produto.categoria_nome) {
+              categorias.add(produto.categoria_nome);
+            } else if (produto.categoria) {
+              categorias.add(produto.categoria);
             }
-          );
+          });
 
+          document.getElementById("totalCategorias").textContent =
+            categorias.size;
 
-        // ===============================================
-        // ALERTAS
-        // ===============================================
+          // ===============================================
+          // SALDO TOTAL
+          // ===============================================
 
-        const alertas =
-          document.getElementById(
-            "alertasEstoque"
-          );
+          const saldoTotal = produtos.reduce((total, produto) => {
+            const quantidade = Number(produto.quantidade || 0);
 
+            const precoCompra = Number(produto.preco_compra || 0);
 
-        if (
-          estoqueBaixo.length === 0
-        ) {
+            return total + quantidade * precoCompra;
+          }, 0);
 
-          alertas.innerHTML = `
+          document.getElementById("saldoTotal").textContent =
+            saldoTotal.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            });
+
+          // ===============================================
+          // ALERTAS
+          // ===============================================
+
+          const alertas = document.getElementById("alertasEstoque");
+
+          if (estoqueBaixo.length === 0) {
+            alertas.innerHTML = `
 
             <p style="
               color:#94a3b8;
@@ -463,15 +464,10 @@
             </p>
 
           `;
-
-        }
-
-        else {
-
-          alertas.innerHTML =
-            estoqueBaixo
+          } else {
+            alertas.innerHTML = estoqueBaixo
               .map(
-                produto => `
+                (produto) => `
 
                   <div class="produto-alerta baixo">
 
@@ -481,88 +477,57 @@
 
                     <span class="qtd">
                       ${produto.quantidade}
-                      unidade${
-                        Number(
-                          produto.quantidade
-                        ) !== 1
-                          ? "s"
-                          : ""
-                      }
+                      unidade${Number(produto.quantidade) !== 1 ? "s" : ""}
                     </span>
 
                   </div>
 
-                `
+                `,
               )
               .join("");
-
+          }
+        } catch (erro) {
+          console.error("Erro ao carregar produtos:", erro);
         }
 
-      }
+        // =================================================
+        // MOVIMENTAÇÕES
+        // =================================================
 
-      catch (erro) {
+        const container = document.getElementById("ultimasMovimentacoes");
 
-        console.error(
-          "Erro ao carregar produtos:",
-          erro
-        );
+        if (!container) {
+          return;
+        }
 
-      }
+        try {
+          /*
+           * IMPORTANTE:
+           * A tentativa de carregar movimentações
+           * fica separada dos produtos.
+           *
+           * Assim, se a rota não existir,
+           * o restante do Dashboard continua funcionando.
+           */
 
+          const resposta = await fetch("/api/relatorios/movimentacoes", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
 
-      // =================================================
-      // MOVIMENTAÇÕES
-      // =================================================
+          // ===============================================
+          // SE A ROTA NÃO EXISTIR
+          // ===============================================
 
-      const container =
-        document.getElementById(
-          "ultimasMovimentacoes"
-        );
+          if (!resposta.ok) {
+            console.warn(
+              "Rota de movimentações não disponível:",
+              resposta.status,
+            );
 
-
-      if (!container) {
-        return;
-      }
-
-
-      try {
-
-        /*
-         * IMPORTANTE:
-         * A tentativa de carregar movimentações
-         * fica separada dos produtos.
-         *
-         * Assim, se a rota não existir,
-         * o restante do Dashboard continua funcionando.
-         */
-
-        const resposta =
-          await fetch(
-            "/api/relatorios/movimentacoes",
-            {
-              headers: {
-                "Authorization":
-                  `Bearer ${token}`,
-                "Content-Type":
-                  "application/json"
-              }
-            }
-          );
-
-
-        // ===============================================
-        // SE A ROTA NÃO EXISTIR
-        // ===============================================
-
-        if (!resposta.ok) {
-
-          console.warn(
-            "Rota de movimentações não disponível:",
-            resposta.status
-          );
-
-
-          container.innerHTML = `
+            container.innerHTML = `
 
             <p style="
               color:#94a3b8;
@@ -574,65 +539,32 @@
 
           `;
 
+            // Não quebra o Dashboard
+            return;
+          }
 
-          // Não quebra o Dashboard
-          return;
+          // ===============================================
+          // LER RESPOSTA
+          // ===============================================
 
-        }
+          const dados = await resposta.json();
 
+          let movimentacoes = [];
 
-        // ===============================================
-        // LER RESPOSTA
-        // ===============================================
+          if (Array.isArray(dados)) {
+            movimentacoes = dados;
+          } else if (dados && Array.isArray(dados.movimentacoes)) {
+            movimentacoes = dados.movimentacoes;
+          } else if (dados && Array.isArray(dados.data)) {
+            movimentacoes = dados.data;
+          }
 
-        const dados =
-          await resposta.json();
+          // ===============================================
+          // NENHUMA MOVIMENTAÇÃO
+          // ===============================================
 
-
-        let movimentacoes = [];
-
-
-        if (Array.isArray(dados)) {
-
-          movimentacoes =
-            dados;
-
-        }
-
-        else if (
-          dados &&
-          Array.isArray(
-            dados.movimentacoes
-          )
-        ) {
-
-          movimentacoes =
-            dados.movimentacoes;
-
-        }
-
-        else if (
-          dados &&
-          Array.isArray(
-            dados.data
-          )
-        ) {
-
-          movimentacoes =
-            dados.data;
-
-        }
-
-
-        // ===============================================
-        // NENHUMA MOVIMENTAÇÃO
-        // ===============================================
-
-        if (
-          movimentacoes.length === 0
-        ) {
-
-          container.innerHTML = `
+          if (movimentacoes.length === 0) {
+            container.innerHTML = `
 
             <p style="
               color:#94a3b8;
@@ -644,141 +576,73 @@
 
           `;
 
-          document.getElementById(
-            "entradasMes"
-          ).textContent = "0";
+            document.getElementById("entradasMes").textContent = "0";
 
-          document.getElementById(
-            "saidasMes"
-          ).textContent = "0";
+            document.getElementById("saidasMes").textContent = "0";
 
-          return;
+            return;
+          }
 
-        }
+          // ===============================================
+          // ORDENAR
+          // ===============================================
 
+          movimentacoes.sort((a, b) => {
+            const dataA = new Date(a.criado_em || a.data || 0);
 
-        // ===============================================
-        // ORDENAR
-        // ===============================================
-
-        movimentacoes.sort(
-          (a, b) => {
-
-            const dataA =
-              new Date(
-                a.criado_em ||
-                a.data ||
-                0
-              );
-
-            const dataB =
-              new Date(
-                b.criado_em ||
-                b.data ||
-                0
-              );
+            const dataB = new Date(b.criado_em || b.data || 0);
 
             return dataB - dataA;
+          });
 
-          }
-        );
+          // ===============================================
+          // 5 ÚLTIMAS
+          // ===============================================
 
+          const ultimas = movimentacoes.slice(0, 5);
 
-        // ===============================================
-        // 5 ÚLTIMAS
-        // ===============================================
+          // ===============================================
+          // MOSTRAR
+          // ===============================================
 
-        const ultimas =
-          movimentacoes.slice(
-            0,
-            5
-          );
+          container.innerHTML = ultimas
+            .map((movimento) => {
+              const tipo = String(movimento.tipo || "").toLowerCase();
 
+              const entrada = tipo === "entrada";
 
-        // ===============================================
-        // MOSTRAR
-        // ===============================================
+              const produto =
+                movimento.produto_nome ||
+                movimento.produto ||
+                movimento.nome_produto ||
+                "Produto";
 
-        container.innerHTML =
-          ultimas
-            .map(
-              movimento => {
+              const quantidade = Number(
+                movimento.quantidade || movimento.qtd || 0,
+              );
 
-                const tipo =
-                  String(
-                    movimento.tipo || ""
-                  ).toLowerCase();
+              const usuario =
+                movimento.usuario_nome || movimento.usuario || "-";
 
+              const dataValor = movimento.criado_em || movimento.data;
 
-                const entrada =
-                  tipo === "entrada";
+              let dataFormatada = "-";
 
+              if (dataValor) {
+                const data = new Date(dataValor);
 
-                const produto =
-                  movimento.produto_nome ||
-                  movimento.produto ||
-                  movimento.nome_produto ||
-                  "Produto";
-
-
-                const quantidade =
-                  Number(
-                    movimento.quantidade ||
-                    movimento.qtd ||
-                    0
-                  );
-
-
-                const usuario =
-                  movimento.usuario_nome ||
-                  movimento.usuario ||
-                  "-";
-
-
-                const dataValor =
-                  movimento.criado_em ||
-                  movimento.data;
-
-
-                let dataFormatada =
-                  "-";
-
-
-                if (dataValor) {
-
-                  const data =
-                    new Date(
-                      dataValor
-                    );
-
-
-                  if (
-                    !isNaN(
-                      data.getTime()
-                    )
-                  ) {
-
-                    dataFormatada =
-                      data.toLocaleDateString(
-                        "pt-BR"
-                      ) +
-                      " " +
-                      data.toLocaleTimeString(
-                        "pt-BR",
-                        {
-                          hour:
-                            "2-digit",
-                          minute:
-                            "2-digit"
-                        }
-                      );
-
-                  }
-
+                if (!isNaN(data.getTime())) {
+                  dataFormatada =
+                    data.toLocaleDateString("pt-BR") +
+                    " " +
+                    data.toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
                 }
+              }
 
-
-                return `
+              return `
 
                   <div style="
                     display:flex;
@@ -811,23 +675,11 @@
                         border-radius:20px;
                         font-size:12px;
                         font-weight:600;
-                        background:${
-                          entrada
-                            ? "#dcfce7"
-                            : "#fee2e2"
-                        };
-                        color:${
-                          entrada
-                            ? "#16a34a"
-                            : "#dc2626"
-                        };
+                        background:${entrada ? "#dcfce7" : "#fee2e2"};
+                        color:${entrada ? "#16a34a" : "#dc2626"};
                       ">
 
-                        ${
-                          entrada
-                            ? "⬆ Entrada"
-                            : "⬇ Saída"
-                        }
+                        ${entrada ? "⬆ Entrada" : "⬇ Saída"}
 
                       </span>
 
@@ -839,11 +691,7 @@
                       ">
 
                         ${quantidade}
-                        unidade${
-                          quantidade !== 1
-                            ? "s"
-                            : ""
-                        }
+                        unidade${quantidade !== 1 ? "s" : ""}
 
                       </span>
 
@@ -880,119 +728,53 @@
                   </div>
 
                 `;
-
-              }
-            )
+            })
             .join("");
 
+          // ===============================================
+          // ENTRADAS / SAÍDAS DO MÊS
+          // ===============================================
 
-        // ===============================================
-        // ENTRADAS / SAÍDAS DO MÊS
-        // ===============================================
+          const agora = new Date();
 
-        const agora =
-          new Date();
+          const mes = agora.getMonth();
 
+          const ano = agora.getFullYear();
 
-        const mes =
-          agora.getMonth();
+          let entradas = 0;
 
+          let saidas = 0;
 
-        const ano =
-          agora.getFullYear();
+          movimentacoes.forEach((movimento) => {
+            const data = new Date(movimento.criado_em || movimento.data || 0);
 
-
-        let entradas =
-          0;
-
-
-        let saidas =
-          0;
-
-
-        movimentacoes.forEach(
-          movimento => {
-
-            const data =
-              new Date(
-                movimento.criado_em ||
-                movimento.data ||
-                0
-              );
-
-
-            if (
-              data.getMonth() !== mes ||
-              data.getFullYear() !== ano
-            ) {
-
+            if (data.getMonth() !== mes || data.getFullYear() !== ano) {
               return;
-
             }
 
+            const quantidade = Number(
+              movimento.quantidade || movimento.qtd || 0,
+            );
 
-            const quantidade =
-              Number(
-                movimento.quantidade ||
-                movimento.qtd ||
-                0
-              );
+            const tipo = String(movimento.tipo || "").toLowerCase();
 
-
-            const tipo =
-              String(
-                movimento.tipo || ""
-              ).toLowerCase();
-
-
-            if (
-              tipo === "entrada"
-            ) {
-
-              entradas +=
-                quantidade;
-
+            if (tipo === "entrada") {
+              entradas += quantidade;
             }
 
-
-            if (
-              tipo === "saida" ||
-              tipo === "saída"
-            ) {
-
-              saidas +=
-                quantidade;
-
+            if (tipo === "saida" || tipo === "saída") {
+              saidas += quantidade;
             }
+          });
 
-          }
-        );
+          document.getElementById("entradasMes").textContent = entradas;
 
+          document.getElementById("saidasMes").textContent = saidas;
+        } catch (erro) {
+          console.error("Movimentações:", erro);
 
-        document.getElementById(
-          "entradasMes"
-        ).textContent =
-          entradas;
-
-
-        document.getElementById(
-          "saidasMes"
-        ).textContent =
-          saidas;
-
-
-      }
-
-      catch (erro) {
-
-        console.error(
-          "Movimentações:",
-          erro
-        );
-
-
-        // NÃO quebra o Dashboard
-        container.innerHTML = `
+          // NÃO quebra o Dashboard
+          container.innerHTML = `
 
           <p style="
             color:#94a3b8;
@@ -1004,20 +786,11 @@
 
         `;
 
+          document.getElementById("entradasMes").textContent = "0";
 
-        document.getElementById(
-          "entradasMes"
-        ).textContent = "0";
-
-
-        document.getElementById(
-          "saidasMes"
-        ).textContent = "0";
-
-      }
-
-    });
-
-</script>
+          document.getElementById("saidasMes").textContent = "0";
+        }
+      });
+    </script>
   </body>
 </html>
